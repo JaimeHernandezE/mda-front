@@ -1,0 +1,74 @@
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #FFFFFF;
+  transition: width 0.3s ease-in-out;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.toggleButton {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.toggleButton button {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.menuList {
+  padding: 24px 0;
+}
+
+.menuLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.menuItem {
+  padding: 24px 32px;
+  margin: 8px 16px;
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  color: rgba(0, 0, 0, 0.6);
+}
+.menuItem:hover {
+  background-color: #FFFFFF;
+  color: rgba(0, 0, 0, 0.87);
+}
+.menuItem.active {
+  background-color: #6C63FF;
+  color: white;
+}
+.menuItem.active .menuIcon {
+  color: white;
+}
+
+.menuIcon {
+  min-width: unset;
+  color: currentColor;
+  margin-right: 24px;
+}
+.collapsed .menuIcon {
+  margin-right: 0;
+}
+
+.menuText span {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 600px) {
+  .sidebar.collapsed {
+    width: 70px;
+  }
+}/*# sourceMappingURL=Sidebar.module.css.map */

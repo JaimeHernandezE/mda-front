@@ -1,0 +1,88 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.sidebar {
+  width: $sidebar-width;
+  height: 100vh;
+  background-color: $light-bg-elevated;
+  transition: width $transition-duration ease-in-out;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid $border-color;
+  
+  &.collapsed {
+    width: $sidebar-collapsed-width;
+  }
+}
+
+.toggleButton {
+  height: $navbar-height;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 $spacing-md;
+  border-bottom: 1px solid $border-color;
+  
+  button {
+    color: $text-primary;
+  }
+}
+
+.menuList {
+  padding: $spacing-md 0;
+}
+
+.menuLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.menuItem {
+  padding: $spacing-md $spacing-lg;
+  margin: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-lg;
+  transition: all $transition-duration ease-in-out;
+  color: $text-secondary;
+  
+  &:hover {
+    background-color: $light-bg-secondary;
+    color: $text-primary;
+  }
+  
+  &.active {
+    background-color: $primary-color;
+    color: white;
+    
+    .menuIcon {
+      color: white;
+    }
+  }
+}
+
+.menuIcon {
+  min-width: unset;
+  color: currentColor;
+  margin-right: $spacing-md;
+  
+  .collapsed & {
+    margin-right: 0;
+  }
+}
+
+.menuText {
+  span {
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+}
+
+// Responsive adjustments
+@include respond-to(sm) {
+  .sidebar {
+    &.collapsed {
+      width: $sidebar-collapsed-width;
+    }
+  }
+} 

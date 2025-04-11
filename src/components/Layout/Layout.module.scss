@@ -1,0 +1,33 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: $dark-bg-primary;
+  color: $text-light;
+}
+
+.main {
+  flex-grow: 1;
+  padding: $spacing-md;
+  transition: margin-left $transition-normal;
+  margin-left: $sidebar-collapsed-width;
+  min-height: 100vh;
+  
+  &.mainShift {
+    margin-left: $sidebar-width;
+  }
+}
+
+.toolbar {
+  min-height: $navbar-height;
+  width: 100%;
+}
+
+// Responsive adjustments
+@include respond-to(sm) {
+  .main {
+    padding: $spacing-lg;
+  }
+} 

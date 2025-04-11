@@ -1,0 +1,96 @@
+.navbar {
+  background-color: #242424 !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  z-index: 1200 !important;
+}
+
+.menuButton {
+  margin-right: 24px;
+}
+
+.title {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.search {
+  position: relative;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.08);
+  margin-left: 32px;
+  width: 300px;
+  display: flex;
+  align-items: center;
+}
+.search:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.search .searchIcon {
+  padding: 16px;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+.search .searchInput {
+  color: rgba(255, 255, 255, 0.87);
+  padding: 16px 16px 16px calc(1em + 32px);
+  width: 100%;
+  background: none;
+  border: none;
+  font-size: 16px;
+}
+.search .searchInput::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.search .searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.search .searchInput:focus {
+  outline: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.avatar:hover {
+  opacity: 0.8;
+}
+
+.loginButton, .logoutButton {
+  text-transform: none;
+  font-weight: 500;
+  padding: 8px 24px;
+  border-radius: 4px;
+}
+.loginButton:hover, .logoutButton:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 900px) {
+  .search {
+    width: 200px;
+    margin-left: 24px;
+  }
+  .logoutButton {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .search {
+    display: none;
+  }
+}/*# sourceMappingURL=Navbar.module.css.map */
