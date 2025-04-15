@@ -42,12 +42,13 @@ $spacing-lg: $spacing-unit * 4;
 $spacing-xl: $spacing-unit * 5;
 
 // Sidebar
-$sidebar-width: 250px;
-$sidebar-collapsed-width: 70px;
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 72px;
 $sidebar-icon-size: 24px;
 
 // Navbar
 $navbar-height: 64px;
+$footer-height: 60px;
 
 // Breakpoints
 $breakpoint-xs: 0;
@@ -79,3 +80,4 @@ $transition-slow: 0.4s ease;
 $transition-duration: 0.3s;
 
 // Added this line 
+$container-width: 1200px; 

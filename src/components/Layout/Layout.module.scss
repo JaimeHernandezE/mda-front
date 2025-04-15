@@ -3,20 +3,51 @@
 
 .layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background-color: $dark-bg-primary;
-  color: $text-light;
+  background-color: $light-bg-primary;
+  color: $text-secondary;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  position: relative;
+  padding-top: $navbar-height;
+  min-height: calc(100vh - #{$navbar-height});
+  width: 100%;
 }
 
 .main {
-  flex-grow: 1;
-  padding: $spacing-md;
-  transition: margin-left $transition-normal;
+  flex: 1;
+  padding: $spacing-lg;
+  transition: all $transition-duration ease-in-out;
   margin-left: $sidebar-collapsed-width;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - #{$sidebar-collapsed-width});
+  min-height: calc(100vh - #{$navbar-height} - #{$footer-height});
   
   &.mainShift {
     margin-left: $sidebar-width;
+    width: calc(100% - #{$sidebar-width});
+  }
+
+  .container {
+    width: 100%;
+    max-width: $container-width;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    > * {
+      width: 100%;
+    }
   }
 }
 
@@ -26,8 +57,40 @@
 }
 
 // Responsive adjustments
-@include respond-to(sm) {
+@include respond-to(md) {
   .main {
-    padding: $spacing-lg;
+    padding: $spacing-md;
+    margin-left: $sidebar-collapsed-width;
+    width: calc(100% - #{$sidebar-collapsed-width});
+    
+    &.mainShift {
+      margin-left: $sidebar-width;
+      width: calc(100% - #{$sidebar-width});
+    }
+
+    .container {
+      padding: 0 $spacing-md;
+    }
+  }
+}
+
+@include respond-to(sm) {
+  .content {
+    padding-top: $navbar-height;
+  }
+
+  .main {
+    padding: $spacing-sm;
+    margin-left: 0;
+    width: 100%;
+    
+    &.mainShift {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .container {
+      padding: 0 $spacing-sm;
+    }
   }
 } 

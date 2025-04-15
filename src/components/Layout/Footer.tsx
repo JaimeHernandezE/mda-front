@@ -1,30 +1,28 @@
 import React from 'react';
-import { Box, Container, Typography, Link, Theme } from '@mui/material';
+import styles from './Footer.module.scss';
 
 const Footer: React.FC = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <Box
-      component="footer"
-      sx={{
-        py: 3,
-        px: 2,
-        mt: 'auto',
-        backgroundColor: (theme: Theme) =>
-          theme.palette.mode === 'light'
-            ? theme.palette.grey[200]
-            : theme.palette.grey[800],
-      }}
-    >
-      <Container maxWidth="sm">
-        <Typography variant="body2" color="text.secondary" align="center">
-          {'Copyright © '}
-          <Link color="inherit" href="/">
-            MDA App
-          </Link>{' '}
-          {new Date().getFullYear()}
-        </Typography>
-      </Container>
-    </Box>
+    <footer className={styles.footer}>
+      <div className={styles.container}>
+        <div className={styles.copyright}>
+          © {currentYear} MDA. Todos los derechos reservados.
+        </div>
+        <div className={styles.links}>
+          <a href="/privacy" className={styles.link}>
+            Privacidad
+          </a>
+          <a href="/terms" className={styles.link}>
+            Términos
+          </a>
+          <a href="/contact" className={styles.link}>
+            Contacto
+          </a>
+        </div>
+      </div>
+    </footer>
   );
 };
 

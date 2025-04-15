@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { Container, CssBaseline } from '@mui/material';
-import Navbar from './Navbar';
-import Sidebar from '../Sidebar/Sidebar';
-import Footer from './Footer';
 import styles from './Layout.module.scss';
+import Sidebar from '../Sidebar/Sidebar';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSidebarToggle = () => {
     setSidebarOpen(!sidebarOpen);
@@ -18,13 +17,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className={styles.layout}>
-      <CssBaseline />
       <Navbar onMenuClick={handleSidebarToggle} />
-      <Sidebar isCollapsed={!sidebarOpen} onToggle={handleSidebarToggle} />
-      <main className={`${styles.main} ${sidebarOpen ? styles.mainShift : ''}`}>
-        <div className={styles.toolbar} />
-        <Container maxWidth="lg">{children}</Container>
-      </main>
+      <div className={styles.content}>
+        <Sidebar isCollapsed={!sidebarOpen} onToggle={handleSidebarToggle} />
+        <main className={`${styles.main} ${sidebarOpen ? styles.mainShift : ''}`}>
+          <div className={styles.toolbar} />
+          <div className={styles.container}>
+            {children}
+          </div>
+        </main>
+      </div>
       <Footer />
     </div>
   );
