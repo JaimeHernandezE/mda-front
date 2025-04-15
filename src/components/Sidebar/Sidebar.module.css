@@ -1,15 +1,26 @@
 .sidebar {
-  width: 250px;
-  height: 100vh;
+  width: 240px;
   background-color: #FFFFFF;
   transition: width 0.3s ease-in-out;
   position: fixed;
+  top: 64px;
+  bottom: 60px;
   left: 0;
-  top: 0;
+  z-index: 1000;
+  box-shadow: 1px 0 2px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  overflow-x: hidden;
   border-right: 1px solid rgba(0, 0, 0, 0.12);
+  display: block !important;
 }
 .sidebar.collapsed {
-  width: 70px;
+  width: 72px;
+}
+.sidebar.collapsed .menuText {
+  display: none;
+}
+.sidebar.collapsed .menuIcon {
+  margin-right: 0;
 }
 
 .toggleButton {
@@ -25,7 +36,7 @@
 }
 
 .menuList {
-  padding: 24px 0;
+  padding: 16px 0;
 }
 
 .menuLink {
@@ -35,11 +46,15 @@
 }
 
 .menuItem {
-  padding: 24px 32px;
-  margin: 8px 16px;
+  padding: 16px 24px;
+  margin: 8px 8px;
   border-radius: 12px;
   transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
   color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  gap: 16px;
 }
 .menuItem:hover {
   background-color: #FFFFFF;
@@ -53,22 +68,52 @@
   color: white;
 }
 
-.menuIcon {
-  min-width: unset;
-  color: currentColor;
-  margin-right: 24px;
-}
-.collapsed .menuIcon {
-  margin-right: 0;
+.submenuList {
+  padding-left: 8px;
 }
 
+.submenuItem {
+  padding: 8px 8px;
+  margin: 8px 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+  gap: 16px;
+}
+.submenuItem:hover {
+  background-color: #FFFFFF;
+  color: rgba(0, 0, 0, 0.87);
+}
+.submenuItem.active {
+  background-color: rgba(108, 99, 255, 0.1);
+  color: #6C63FF;
+}
+.submenuItem.active .menuIcon {
+  color: #6C63FF;
+}
+
+.menuIcon {
+  min-width: 50px;
+  color: currentColor;
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuText {
+  flex: 1;
+}
 .menuText span {
   font-weight: 500;
   font-size: 0.9rem;
 }
 
 @media (min-width: 600px) {
-  .sidebar.collapsed {
-    width: 70px;
+  .sidebar {
+    display: none;
   }
 }/*# sourceMappingURL=Sidebar.module.css.map */

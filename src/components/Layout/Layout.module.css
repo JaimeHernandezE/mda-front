@@ -1,19 +1,48 @@
 .layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background-color: #121212;
-  color: rgba(255, 255, 255, 0.87);
+  background-color: #F8F4F3;
+  color: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  position: relative;
+  padding-top: 64px;
+  min-height: calc(100vh - 64px);
+  width: 100%;
 }
 
 .main {
-  flex-grow: 1;
-  padding: 24px;
-  transition: margin-left 0.3s ease;
-  margin-left: 70px;
-  min-height: 100vh;
+  flex: 1;
+  padding: 32px;
+  transition: all 0.3s ease-in-out;
+  margin-left: 72px;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 72px);
+  min-height: calc(100vh - 64px - 60px);
 }
 .main.mainShift {
-  margin-left: 250px;
+  margin-left: 240px;
+  width: calc(100% - 240px);
+}
+.main .container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.main .container > * {
+  width: 100%;
 }
 
 .toolbar {
@@ -21,8 +50,34 @@
   width: 100%;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 900px) {
   .main {
-    padding: 32px;
+    padding: 24px;
+    margin-left: 72px;
+    width: calc(100% - 72px);
+  }
+  .main.mainShift {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+  .main .container {
+    padding: 0 24px;
+  }
+}
+@media (min-width: 600px) {
+  .content {
+    padding-top: 64px;
+  }
+  .main {
+    padding: 16px;
+    margin-left: 0;
+    width: 100%;
+  }
+  .main.mainShift {
+    margin-left: 0;
+    width: 100%;
+  }
+  .main .container {
+    padding: 0 16px;
   }
 }/*# sourceMappingURL=Layout.module.css.map */

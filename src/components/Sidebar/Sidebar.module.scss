@@ -3,16 +3,29 @@
 
 .sidebar {
   width: $sidebar-width;
-  height: 100vh;
   background-color: $light-bg-elevated;
   transition: width $transition-duration ease-in-out;
   position: fixed;
+  top: $navbar-height;
+  bottom: $footer-height;
   left: 0;
-  top: 0;
+  z-index: 1000;
+  box-shadow: 1px 0 2px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  overflow-x: hidden;
   border-right: 1px solid $border-color;
+  display: block !important;
   
   &.collapsed {
     width: $sidebar-collapsed-width;
+
+    .menuText {
+      display: none;
+    }
+
+    .menuIcon {
+      margin-right: 0;
+    }
   }
 }
 
@@ -30,7 +43,7 @@
 }
 
 .menuList {
-  padding: $spacing-md 0;
+  padding: $spacing-xs 0;
 }
 
 .menuLink {
@@ -40,11 +53,16 @@
 }
 
 .menuItem {
-  padding: $spacing-md $spacing-lg;
-  margin: $spacing-xs $spacing-sm;
+  padding: $spacing-xs;
+  padding-left: $spacing-sm;
+  margin: $spacing-xs 0;
   border-radius: $border-radius-lg;
   transition: all $transition-duration ease-in-out;
+  display: flex;
+  align-items: center;
   color: $text-secondary;
+  cursor: pointer;
+  gap: $spacing-sm;
   
   &:hover {
     background-color: $light-bg-secondary;
@@ -61,17 +79,48 @@
   }
 }
 
-.menuIcon {
-  min-width: unset;
-  color: currentColor;
-  margin-right: $spacing-md;
+.submenuList {
+  padding-left: $spacing-md;
+}
+
+.submenuItem {
+  padding: $spacing-xs;
+  padding-left: $spacing-sm;
+  margin: $spacing-xs 0;
+  border-radius: $border-radius-md;
+  transition: all $transition-duration ease-in-out;
+  display: flex;
+  align-items: center;
+  color: $text-secondary;
+  font-size: 0.9rem;
+  gap: $spacing-sm;
   
-  .collapsed & {
-    margin-right: 0;
+  &:hover {
+    background-color: $light-bg-secondary;
+    color: $text-primary;
+  }
+  
+  &.active {
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+    
+    .menuIcon {
+      color: $primary-color;
+    }
   }
 }
 
+.menuIcon {
+  min-width: 24px;
+  color: currentColor;
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .menuText {
+  flex: 1;
   span {
     font-weight: 500;
     font-size: 0.9rem;
@@ -81,8 +130,6 @@
 // Responsive adjustments
 @include respond-to(sm) {
   .sidebar {
-    &.collapsed {
-      width: $sidebar-collapsed-width;
-    }
+    display: none;
   }
-} 
+}
