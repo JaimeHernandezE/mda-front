@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Box, List, ListItem, ListItemIcon, ListItemText, Tooltip, IconButton } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -6,23 +6,25 @@ import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MenuIcon from '@mui/icons-material/Menu';
 import styles from './Sidebar.module.scss';
+import classNames from 'classnames';
 
 interface SidebarProps {
   isCollapsed: boolean;
   onToggle: () => void;
 }
 
-const menuItems = [
-  { path: '/', icon: <DashboardIcon />, text: 'Dashboard' },
-  { path: '/profile', icon: <PersonIcon />, text: 'Profile' },
-  { path: '/settings', icon: <SettingsIcon />, text: 'Settings' },
-];
-
-const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
+const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(({ isCollapsed, onToggle }, ref) => {
   const location = useLocation();
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <Box className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}>
+    <div 
+      ref={ref}
+      className={classNames(styles.sidebar, {
+        [styles.collapsed]: isCollapsed
+      })}
+    >
       <Box className={styles.toggleButton}>
         <IconButton onClick={onToggle} size="large">
           <MenuIcon />
@@ -30,37 +32,83 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       </Box>
       
       <List component="nav" className={styles.menuList}>
-        {menuItems.map((item) => {
-          const isActive = location.pathname === item.path;
-          
-          return (
-            <Link to={item.path} key={item.path} className={styles.menuLink}>
-              <Tooltip title={isCollapsed ? item.text : ''} placement="right">
-                <ListItem
-                  component="div"
-                  sx={{ 
-                    cursor: 'pointer',
-                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
-                  }}
-                  className={`${styles.menuItem} ${isActive ? styles.active : ''}`}
-                >
-                  <ListItemIcon className={styles.menuIcon}>
-                    {item.icon}
-                  </ListItemIcon>
-                  {!isCollapsed && (
-                    <ListItemText 
-                      primary={item.text} 
-                      className={styles.menuText}
-                    />
-                  )}
-                </ListItem>
-              </Tooltip>
-            </Link>
-          );
-        })}
+        <Link to="/" className={styles.menuLink}>
+          <Tooltip title={isCollapsed ? 'Dashboard' : ''} placement="right">
+            <ListItem
+              component="div"
+              sx={{ 
+                cursor: 'pointer',
+                '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
+              }}
+              className={classNames(styles.menuItem, {
+                [styles.active]: isActive('/')
+              })}
+            >
+              <ListItemIcon className={styles.menuIcon}>
+                <DashboardIcon />
+              </ListItemIcon>
+              {!isCollapsed && (
+                <ListItemText 
+                  primary="Dashboard" 
+                  className={styles.menuText}
+                />
+              )}
+            </ListItem>
+          </Tooltip>
+        </Link>
+        <Link to="/profile" className={styles.menuLink}>
+          <Tooltip title={isCollapsed ? 'Profile' : ''} placement="right">
+            <ListItem
+              component="div"
+              sx={{ 
+                cursor: 'pointer',
+                '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
+              }}
+              className={classNames(styles.menuItem, {
+                [styles.active]: isActive('/profile')
+              })}
+            >
+              <ListItemIcon className={styles.menuIcon}>
+                <PersonIcon />
+              </ListItemIcon>
+              {!isCollapsed && (
+                <ListItemText 
+                  primary="Profile" 
+                  className={styles.menuText}
+                />
+              )}
+            </ListItem>
+          </Tooltip>
+        </Link>
+        <Link to="/settings" className={styles.menuLink}>
+          <Tooltip title={isCollapsed ? 'Settings' : ''} placement="right">
+            <ListItem
+              component="div"
+              sx={{ 
+                cursor: 'pointer',
+                '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
+              }}
+              className={classNames(styles.menuItem, {
+                [styles.active]: isActive('/settings')
+              })}
+            >
+              <ListItemIcon className={styles.menuIcon}>
+                <SettingsIcon />
+              </ListItemIcon>
+              {!isCollapsed && (
+                <ListItemText 
+                  primary="Settings" 
+                  className={styles.menuText}
+                />
+              )}
+            </ListItem>
+          </Tooltip>
+        </Link>
       </List>
-    </Box>
+    </div>
   );
-};
+});
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar; 

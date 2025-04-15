@@ -34,10 +34,11 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       <Toolbar>
         <IconButton
           color="inherit"
-          aria-label="menu"
+          aria-label="open drawer"
           onClick={onMenuClick}
           edge="start"
           className={styles.menuButton}
+          id="sidebar-toggle"
         >
           <MenuIcon />
         </IconButton>
