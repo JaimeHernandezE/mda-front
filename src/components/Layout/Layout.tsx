@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Layout.module.scss';
 import Sidebar from '../Sidebar/Sidebar';
-import Navbar from './Navbar';
+import Navbar from '../Navbar/Navbar';
 import Footer from './Footer';
 
 interface LayoutProps {

@@ -1,62 +1,97 @@
 import React from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Box,
+  Avatar,
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Search as SearchIcon,
+  Notifications as NotificationsIcon,
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import styles from './Navbar.module.scss';
-
+import { useAuth } from '../../context/AuthContext';
 interface NavbarProps {
-  onToggleSidebar: () => void;
+  onMenuClick: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
+const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  const handleLogin = () => {
-    navigate('/login');
-  };
+  console.log(user);
 
   const handleLogout = () => {
     logout();
   };
 
   return (
-    <nav className={styles.navbar}>
-      <div className={styles.leftSection}>
-        <button 
-          className={styles.toggleButton}
-          onClick={onToggleSidebar}
-          aria-label="Toggle sidebar"
+    <AppBar position="fixed" className={styles.navbar}>
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={onMenuClick}
+          edge="start"
+          className={styles.menuButton}
+          id="sidebar-toggle"
         >
-          <span className={styles.toggleIcon} />
-        </button>
-        <div className={styles.logo}>
-          <img src="/logo.png" alt="Logo" />
+          <MenuIcon />
+        </IconButton>
+
+        <Typography variant="h6" component="div" className={styles.title}>
+          MDC
+        </Typography>
+
+        <div className={styles.search}>
+          <SearchIcon className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className={styles.searchInput}
+          />
         </div>
-      </div>
-      
-      <div className={styles.rightSection}>
-        {user ? (
-          <div className={styles.userMenu}>
-            <span className={styles.userName}>
-              {user.first_name || user.email}
-            </span>
-            <button 
-              className={styles.logoutButton}
-              onClick={handleLogout}
+
+        <Box sx={{ flexGrow: 1 }} />
+
+        <Box className={styles.actions}>
+          {user ? (
+            <>
+              <IconButton color="inherit">
+                <NotificationsIcon />
+              </IconButton>
+              <span className={styles.userName}>
+                {user.first_name + ' ' + user.last_name || user.email}
+              </span>
+              <Avatar
+                className={styles.avatar}
+                onClick={() => navigate('/profile')}
+              />
+              <Button
+                color="inherit"
+                onClick={handleLogout}
+                className={styles.logoutButton}
+              >
+                Cerrar Sesión
+              </Button>
+            </>
+          ) : (
+            <Button
+              color="inherit"
+              onClick={() => navigate('/login')}
+              className={styles.loginButton}
             >
-              Cerrar sesión
-            </button>
-          </div>
-        ) : (
-          <button 
-            className={styles.loginButton}
-            onClick={handleLogin}
-          >
-            Iniciar sesión
-          </button>
-        )}
-      </div>
-    </nav>
+              Iniciar Sesión
+            </Button>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
