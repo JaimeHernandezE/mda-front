@@ -4,13 +4,13 @@ import { Property } from './property.types';
 
 export interface Project {
   id: number;
-  project_name: string;
-  project_description: string;
-  property?: Property;
-  project_owner: User;
-  is_active: boolean;
   created: string;
   modified: string;
+  project_name: string;
+  project_description: string;
+  is_active: boolean;
+  property: Property | null;
+  project_owner: number;
 }
 
 export interface CreateProjectDto {
