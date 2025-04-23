@@ -85,7 +85,7 @@
 
 .submenuItem {
   padding: $spacing-xs;
-  padding-left: $spacing-sm;
+  padding-left: $spacing-xs;
   margin: $spacing-xs 0;
   border-radius: $border-radius-md;
   transition: all $transition-duration ease-in-out;
@@ -124,6 +124,7 @@
   span {
     font-weight: 500;
     font-size: 0.9rem;
+    max-width: 120px;
   }
 }
 

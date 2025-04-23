@@ -45,7 +45,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         </IconButton>
 
         <Typography variant="h6" component="div" className={styles.title}>
-          MDC
+          MDA
         </Typography>
 
         <div className={styles.search}>
