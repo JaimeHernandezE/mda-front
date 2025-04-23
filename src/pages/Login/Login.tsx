@@ -1,6 +1,6 @@
 // src/pages/Login.tsx
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import styles from './Login.module.scss';
 
