@@ -1,12 +1,12 @@
-@import '../../styles/variables';
-@import '../../styles/mixins';
+@use '../../styles/variables' as vars;
+@use '../../styles/mixins' as mix;
 
 .layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: $light-bg-primary;
-  color: $text-secondary;
+  background-color: vars.$light-bg-primary;
+  color: vars.$text-secondary;
   width: 100%;
   overflow-x: hidden;
   position: relative;
@@ -16,32 +16,32 @@
   display: flex;
   flex: 1;
   position: relative;
-  padding-top: $navbar-height;
-  min-height: calc(100vh - #{$navbar-height});
+  padding-top: 15px;
+  min-height: calc(100vh - #{vars.$navbar-height});
   width: 100%;
   margin-left: 40px;
 }
 
 .main {
   flex: 1;
-  padding: $spacing-lg;
-  transition: all $transition-duration ease-in-out;
-  margin-left: $sidebar-collapsed-width;
+  padding: 0;
+  transition: all vars.$transition-duration ease-in-out;
+  margin-left: vars.$sidebar-collapsed-width;
   display: flex;
   flex-direction: column;
-  width: calc(100% - #{$sidebar-collapsed-width});
-  min-height: calc(100vh - #{$navbar-height} - #{$footer-height});
+  width: calc(100% - #{vars.$sidebar-collapsed-width});
+  min-height: calc(100vh - #{vars.$navbar-height} - #{vars.$footer-height});
   
   &.mainShift {
-    margin-left: $sidebar-width;
-    width: calc(100% - #{$sidebar-width});
+    margin-left: vars.$sidebar-width;
+    width: calc(100% - #{vars.$sidebar-width});
   }
 
   .container {
     width: 100%;
-    max-width: $container-width;
+    max-width: vars.$container-width;
     margin: 0 auto;
-    padding: 0 $spacing-md;
+    padding: 0;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -53,35 +53,35 @@
 }
 
 .toolbar {
-  min-height: $navbar-height;
+  min-height: vars.$navbar-height;
   width: 100%;
 }
 
 // Responsive adjustments
-@include respond-to(md) {
+@include mix.respond-to(md) {
   .main {
-    padding: $spacing-md;
-    margin-left: $sidebar-collapsed-width;
-    width: calc(100% - #{$sidebar-collapsed-width});
+    padding: 0;
+    margin-left: vars.$sidebar-collapsed-width;
+    width: calc(100% - #{vars.$sidebar-collapsed-width});
     
     &.mainShift {
-      margin-left: $sidebar-width;
-      width: calc(100% - #{$sidebar-width});
+      margin-left: vars.$sidebar-width;
+      width: calc(100% - #{vars.$sidebar-width});
     }
 
     .container {
-      padding: 0 $spacing-md;
+      padding: 0;
     }
   }
 }
 
-@include respond-to(sm) {
+@include mix.respond-to(sm) {
   .content {
-    padding-top: $navbar-height;
+    padding-top: 15px;
   }
 
   .main {
-    padding: $spacing-sm;
+    padding: 0;
     margin-left: 0;
     width: 100%;
     
@@ -91,7 +91,7 @@
     }
 
     .container {
-      padding: 0 $spacing-sm;
+      padding: 0;
     }
   }
 } 

@@ -1,4 +1,4 @@
-@import './variables';
+@import './_variables';
 
 @mixin respond-to($breakpoint) {
   @if $breakpoint == xs {

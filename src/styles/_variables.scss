@@ -1,20 +1,27 @@
+// Colors
+$primary-color: #1976d2;
+$secondary-color: #dc004e;
+$background-color: #f5f5f5;
+$white: #ffffff;
+$black: #000000;
+$text-color: #333333;
+$border-color: #e0e0e0;
+
 // Theme Colors
-$primary-color: #6C63FF;
-$secondary-color: #9c27b0;
 $error-color: #d32f2f;
 $warning-color: #ed6c02;
 $info-color: #0288d1;
 $success-color: #2e7d32;
 
 // Light Theme Colors
-$light-bg-primary: #F8F4F3;    // Color crema claro para el sidebar
-$light-bg-secondary: #FFFFFF;  // Blanco para elementos secundarios
-$light-bg-elevated: #FFFFFF;   // Blanco para navbar
+$light-bg-primary: #F8F4F3;
+$light-bg-secondary: #FFFFFF;
+$light-bg-elevated: #FFFFFF;
 
 // Dark Theme Colors
-$dark-bg-primary: #121212;    // Dark mode background
-$dark-bg-secondary: #1E1E1E;  // Dark mode secondary
-$dark-bg-elevated: #242424;   // Dark mode elevated
+$dark-bg-primary: #121212;
+$dark-bg-secondary: #1E1E1E;
+$dark-bg-elevated: #242424;
 
 // Text colors
 $text-dark: rgba(0, 0, 0, 0.87);
@@ -26,29 +33,40 @@ $text-light-disabled: rgba(255, 255, 255, 0.38);
 $text-primary: $text-dark;
 $text-secondary: $text-dark-secondary;
 
-// Border
-$border-color: rgba(0, 0, 0, 0.12);
-
 // Background colors
 $background-default: $light-bg-primary;
 $background-paper: $light-bg-secondary;
 
 // Spacing
-$spacing-unit: 8px;
-$spacing-xs: $spacing-unit;
-$spacing-sm: $spacing-unit * 2;
-$spacing-md: $spacing-unit * 3;
-$spacing-lg: $spacing-unit * 4;
-$spacing-xl: $spacing-unit * 5;
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
 
-// Sidebar
+// Border Radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// Shadows
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+$shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+// Transitions
+$transition-fast: 0.2s;
+$transition-normal: 0.3s;
+$transition-slow: 0.5s;
+$transition-duration: 0.3s;
+
+// Layout
 $sidebar-width: 240px;
 $sidebar-collapsed-width: 72px;
 $sidebar-icon-size: 24px;
-
-// Navbar
 $navbar-height: 64px;
 $footer-height: 60px;
+$container-width: 1200px;
 
 // Breakpoints
 $breakpoint-xs: 0;
@@ -61,23 +79,4 @@ $breakpoint-xl: 1536px;
 $font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 $font-size-base: 16px;
 $font-size-sm: 14px;
-$font-size-lg: 18px;
-
-// Border radius
-$border-radius-sm: 4px;
-$border-radius-md: 8px;
-$border-radius-lg: 12px;
-
-// Shadows
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
-
-// Transitions
-$transition-fast: 0.2s ease;
-$transition-normal: 0.3s ease;
-$transition-slow: 0.4s ease;
-$transition-duration: 0.3s;
-
-// Added this line 
-$container-width: 1200px; 
+$font-size-lg: 18px; 

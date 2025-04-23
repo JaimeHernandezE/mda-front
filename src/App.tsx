@@ -11,6 +11,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login/Login';
+import CreateProject from './pages/Projects/CreateProject';
+import ProjectList from './pages/Projects/ProjectList';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +55,20 @@ const App: React.FC = () => {
                   <ProtectedRoute element={
                     <Layout>
                       <Home />
+                    </Layout>
+                  } />
+                } />
+                <Route path="/proyectos/crear" element={
+                  <ProtectedRoute element={
+                    <Layout>
+                      <CreateProject />
+                    </Layout>
+                  } />
+                } />
+                <Route path="/proyectos/lista" element={
+                  <ProtectedRoute element={
+                    <Layout>
+                      <ProjectList />
                     </Layout>
                   } />
                 } />

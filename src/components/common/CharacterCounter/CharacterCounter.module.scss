@@ -1,0 +1,63 @@
+@use '../../../styles/variables' as *;
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  width: 95%;
+}
+
+.label {
+  font-weight: 500;
+  color: $text-color;
+  display: flex;
+  gap: $spacing-xs;
+  align-items: center;
+}
+
+.required {
+  color: $error-color;
+}
+
+.input {
+  padding: $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  font-size: 1rem;
+  transition: all $transition-fast;
+  width: 100%;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+  
+  &.error {
+    border-color: $error-color;
+  }
+}
+
+textarea.input {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.counter {
+  color: $text-secondary;
+  
+  &.limit {
+    color: $warning-color;
+  }
+}
+
+.errorMessage {
+  color: $error-color;
+  font-size: 0.875rem;
+} 

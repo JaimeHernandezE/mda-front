@@ -1,3 +1,6 @@
+// Common Types
+import { User } from './user.types';
+
 // API Response Types
 export interface ApiResponse<T> {
   data: T;
@@ -17,18 +20,6 @@ export interface ApiError {
   message: string;
   status: number;
   errors?: Record<string, string[]>;
-}
-
-// Common Types
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  isActive: boolean;
-  dateJoined: string;
-  lastLogin?: string;
 }
 
 export interface AuthResponse {

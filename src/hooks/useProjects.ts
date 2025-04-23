@@ -1,17 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Project, CreateProjectDto, UpdateProjectDto } from '../types/project.types';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const useProjects = () => {
   const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
+
+  // Configuración de axios con el token
+  const axiosConfig = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
 
   // Obtener lista de proyectos
   const { data: projects, isLoading: isLoadingProjects } = useQuery<Project[]>({
     queryKey: ['projects'],
     queryFn: async () => {
-      const response = await axios.get(`${API_URL}/projects/`);
+      const response = await axios.get(`${API_URL}/projects/`, axiosConfig);
       return response.data;
     },
   });
@@ -21,7 +31,7 @@ export const useProjects = () => {
     return useQuery<Project>({
       queryKey: ['projects', id],
       queryFn: async () => {
-        const response = await axios.get(`${API_URL}/projects/${id}/`);
+        const response = await axios.get(`${API_URL}/projects/${id}/`, axiosConfig);
         return response.data;
       },
       enabled: !!id,
@@ -31,7 +41,7 @@ export const useProjects = () => {
   // Crear un nuevo proyecto
   const createProject = useMutation({
     mutationFn: async (newProject: CreateProjectDto) => {
-      const response = await axios.post(`${API_URL}/projects/`, newProject);
+      const response = await axios.post(`${API_URL}/projects/`, newProject, axiosConfig);
       return response.data;
     },
     onSuccess: () => {
@@ -42,7 +52,7 @@ export const useProjects = () => {
   // Actualizar un proyecto
   const updateProject = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UpdateProjectDto }) => {
-      const response = await axios.put(`${API_URL}/projects/${id}/`, data);
+      const response = await axios.put(`${API_URL}/projects/${id}/`, data, axiosConfig);
       return response.data;
     },
     onSuccess: (_, variables) => {
@@ -54,7 +64,7 @@ export const useProjects = () => {
   // Actualización parcial de un proyecto
   const patchProject = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UpdateProjectDto }) => {
-      const response = await axios.patch(`${API_URL}/projects/${id}/`, data);
+      const response = await axios.patch(`${API_URL}/projects/${id}/`, data, axiosConfig);
       return response.data;
     },
     onSuccess: (_, variables) => {
@@ -66,7 +76,7 @@ export const useProjects = () => {
   // Eliminar un proyecto
   const deleteProject = useMutation({
     mutationFn: async (id: number) => {
-      await axios.delete(`${API_URL}/projects/${id}/`);
+      await axios.delete(`${API_URL}/projects/${id}/`, axiosConfig);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });

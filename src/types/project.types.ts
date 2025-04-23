@@ -1,3 +1,4 @@
+// Project Types
 import { User } from './user.types';
 import { Property } from './property.types';
 

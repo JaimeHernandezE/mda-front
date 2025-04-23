@@ -1,0 +1,7 @@
+@use '../../styles/variables' as *;
+
+.pageContainer {
+  padding: 1rem;
+  min-height: calc(100vh - #{$navbar-height} - #{$footer-height});
+  background-color: $background-color;
+} 

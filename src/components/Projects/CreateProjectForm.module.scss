@@ -1,0 +1,78 @@
+@use '../../styles/variables' as *;
+@use 'sass:color';
+
+.formContainer {
+  max-width: 600px;
+  margin: $spacing-xl auto;
+  padding: $spacing-xl;
+  background: $white;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
+
+  h2 {
+    margin-bottom: $spacing-lg;
+    color: $primary-color;
+    text-align: center;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  label {
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  input[type="text"],
+  textarea {
+    padding: $spacing-md;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    font-size: 1rem;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  input[type="checkbox"] {
+    margin-right: $spacing-sm;
+  }
+}
+
+.submitButton {
+  background-color: $primary-color;
+  color: $white;
+  padding: $spacing-md $spacing-lg;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+  }
+
+  &:disabled {
+    background-color: $border-color;
+    cursor: not-allowed;
+  }
+} 
