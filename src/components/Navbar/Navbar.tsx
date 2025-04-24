@@ -16,46 +16,68 @@ import {
 import { useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 import { useAuth } from '../../context/AuthContext';
+
 interface NavbarProps {
-  onMenuClick: () => void;
+  onMenuClick?: () => void;
+  isPublic?: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ onMenuClick, isPublic = false }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  console.log(user);
-
   const handleLogout = () => {
     logout();
+    navigate('/');
   };
+
+  const handleLogoClick = () => {
+    if (user) {
+      navigate('/home');
+    } else {
+      navigate('/');
+    }
+  };
+
+  // Si el usuario está autenticado, siempre mostrar la versión completa del navbar
+  const shouldShowFullNavbar = user || !isPublic;
 
   return (
     <AppBar position="fixed" className={styles.navbar}>
       <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={onMenuClick}
-          edge="start"
-          className={styles.menuButton}
-          id="sidebar-toggle"
-        >
-          <MenuIcon />
-        </IconButton>
+        {shouldShowFullNavbar && (
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={onMenuClick}
+            edge="start"
+            className={styles.menuButton}
+            id="sidebar-toggle"
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
 
-        <Typography variant="h6" component="div" className={styles.title}>
+        <Typography 
+          variant="h6" 
+          component="div" 
+          className={styles.title}
+          onClick={handleLogoClick}
+          style={{ cursor: 'pointer' }}
+        >
           MDA
         </Typography>
 
-        <div className={styles.search}>
-          <SearchIcon className={styles.searchIcon} />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className={styles.searchInput}
-          />
-        </div>
+        {shouldShowFullNavbar && (
+          <div className={styles.search}>
+            <SearchIcon className={styles.searchIcon} />
+            <input
+              type="text"
+              placeholder="Buscar..."
+              className={styles.searchInput}
+            />
+          </div>
+        )}
 
         <Box sx={{ flexGrow: 1 }} />
 

@@ -9,8 +9,10 @@ import theme from './utils/theme';
 // Context y páginas
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout/Layout';
+import PublicLayout from './components/Layout/PublicLayout';
 import Home from './pages/Home';
 import Login from './pages/Login/Login';
+import Landing from './pages/Landing/Landing';
 import CreateProject from './pages/Projects/CreateProject';
 import ProjectList from './pages/Projects/ProjectList';
 import ProjectDetail from './pages/Projects/ProjectDetail';
@@ -52,8 +54,13 @@ const App: React.FC = () => {
           <Router future={{ v7_relativeSplatPath: true }}>
             <AuthProvider>
               <Routes>
-                <Route path="/login" element={<Login />} />
                 <Route path="/" element={
+                  <PublicLayout>
+                    <Landing />
+                  </PublicLayout>
+                } />
+                <Route path="/login" element={<Login />} />
+                <Route path="/home" element={
                   <ProtectedRoute element={
                     <Layout>
                       <Home />

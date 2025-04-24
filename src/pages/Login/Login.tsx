@@ -3,9 +3,11 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import styles from './Login.module.scss';
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const { loginWithGoogle } = useAuth();
+  const navigate = useNavigate();
 
   const handleGoogleSuccess = (response: any) => {
     if (response.credential) {
