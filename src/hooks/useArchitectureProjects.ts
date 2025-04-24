@@ -1,17 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ArchitectureProject, CreateArchitectureProjectDto, UpdateArchitectureProjectDto } from '../types/project.types';
+import { ArchitectureProject, CreateArchitectureProjectDto, UpdateArchitectureProjectDto } from '../types/architecture.types';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const useArchitectureProjects = (projectId?: number) => {
   const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
 
+  const axiosConfig = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
   // Obtener proyectos de arquitectura de un proyecto
   const { data: architectureProjects, isLoading: isLoadingArchitectureProjects } = useQuery<ArchitectureProject[]>({
     queryKey: ['architectureProjects', projectId],
     queryFn: async () => {
-      const response = await axios.get(`${API_URL}/projects/${projectId}/architecture-projects/`);
+      const response = await axios.get(`${API_URL}/architecture-projects/`, axiosConfig);
       return response.data;
     },
     enabled: !!projectId,
@@ -22,7 +30,7 @@ export const useArchitectureProjects = (projectId?: number) => {
     return useQuery<ArchitectureProject>({
       queryKey: ['architectureProjects', projectId, architectureProjectId],
       queryFn: async () => {
-        const response = await axios.get(`${API_URL}/projects/${projectId}/architecture-projects/${architectureProjectId}/`);
+        const response = await axios.get(`${API_URL}/architecture-projects/${architectureProjectId}/`, axiosConfig);
         return response.data;
       },
       enabled: !!projectId && !!architectureProjectId,
@@ -32,7 +40,7 @@ export const useArchitectureProjects = (projectId?: number) => {
   // Crear un nuevo proyecto de arquitectura
   const createArchitectureProject = useMutation({
     mutationFn: async (newArchitectureProject: CreateArchitectureProjectDto) => {
-      const response = await axios.post(`${API_URL}/projects/${projectId}/architecture-projects/`, newArchitectureProject);
+      const response = await axios.post(`${API_URL}/architecture-projects/`, newArchitectureProject, axiosConfig);
       return response.data;
     },
     onSuccess: () => {
@@ -43,7 +51,7 @@ export const useArchitectureProjects = (projectId?: number) => {
   // Actualizar un proyecto de arquitectura
   const updateArchitectureProject = useMutation({
     mutationFn: async ({ architectureProjectId, data }: { architectureProjectId: number; data: UpdateArchitectureProjectDto }) => {
-      const response = await axios.put(`${API_URL}/projects/${projectId}/architecture-projects/${architectureProjectId}/`, data);
+      const response = await axios.put(`${API_URL}/architecture-projects/${architectureProjectId}/`, data, axiosConfig);
       return response.data;
     },
     onSuccess: (_, variables) => {
@@ -55,7 +63,7 @@ export const useArchitectureProjects = (projectId?: number) => {
   // Eliminar un proyecto de arquitectura
   const deleteArchitectureProject = useMutation({
     mutationFn: async (architectureProjectId: number) => {
-      await axios.delete(`${API_URL}/projects/${projectId}/architecture-projects/${architectureProjectId}/`);
+      await axios.delete(`${API_URL}/architecture-projects/${architectureProjectId}/`, axiosConfig);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['architectureProjects', projectId] });

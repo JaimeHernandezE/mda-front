@@ -1,55 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import { usePermitTypes } from '../../hooks/usePermitTypes';
+import { useArchitectureProjects } from '../../hooks/useArchitectureProjects';
+import { CreateArchitectureProjectDto } from '../../types/architecture.types';
 import styles from './CreateArchitectureProject.module.scss';
-
-interface ArchitectureProjectForm {
-  project: number;
-  architecture_project_name: string;
-  architecture_project_description: string;
-  is_active: boolean;
-  start_date: string;
-  permit_subtype: string;
-  loteo_contruccion_simultanea: boolean;
-  loteo_dfl2: boolean;
-}
 
 const CreateArchitectureProject: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { permitTypes, isLoading, isError, error } = usePermitTypes();
+  const { createArchitectureProject } = useArchitectureProjects(Number(id));
   
-  const [formData, setFormData] = useState<ArchitectureProjectForm>({
+  const [formData, setFormData] = useState<CreateArchitectureProjectDto>({
     project: Number(id),
     architecture_project_name: '',
     architecture_project_description: '',
     is_active: true,
     start_date: new Date().toISOString().split('T')[0],
-    permit_subtype: '',
-    loteo_contruccion_simultanea: false,
-    loteo_dfl2: false
+    permit_subtype: undefined
   });
 
-  const createArchitectureProject = useMutation({
-    mutationFn: (data: ArchitectureProjectForm) => 
-      axios.post('/api/architecture-projects/', data),
-    onSuccess: () => {
-      navigate(`/proyectos/${id}`);
-    }
-  });
+  const [selectedPermitType, setSelectedPermitType] = useState<number>(0);
+
+  useEffect(() => {
+    console.log('Current permitTypes:', permitTypes);
+    console.log('Selected permit type:', selectedPermitType);
+  }, [permitTypes, selectedPermitType]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
+    console.log('Input change:', name, value);
+    
+    if (name === 'permit_type') {
+      const numValue = Number(value);
+      console.log('Setting permit type:', numValue);
+      setSelectedPermitType(numValue);
+      setFormData(prev => ({
+        ...prev,
+        permit_subtype: undefined
+      }));
+    } else if (name === 'permit_subtype') {
+      setFormData(prev => ({
+        ...prev,
+        permit_subtype: value ? Number(value) : undefined
+      }));
+    } else if (name === 'is_active') {
+      setFormData(prev => ({
+        ...prev,
+        is_active: (e.target as HTMLInputElement).checked
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    createArchitectureProject.mutate(formData);
+    console.log('Submitting form data:', formData);
+    try {
+      await createArchitectureProject.mutateAsync(formData);
+      navigate(`/proyectos/${id}`);
+    } catch (error) {
+      console.error('Error creating architecture project:', error);
+    }
   };
+
+  if (isLoading) {
+    return <div>Cargando tipos de permiso...</div>;
+  }
+
+  if (isError) {
+    console.error('Error loading permit types:', error);
+    return <div>Error al cargar los tipos de permiso. Por favor, intente nuevamente.</div>;
+  }
+
+  const selectedType = permitTypes?.find(type => type.id === selectedPermitType);
+  console.log('Selected type details:', selectedType);
 
   return (
     <div className={styles.container}>
@@ -62,7 +91,7 @@ const CreateArchitectureProject: React.FC = () => {
             type="text"
             id="architecture_project_name"
             name="architecture_project_name"
-            value={formData.architecture_project_name}
+            value={formData.architecture_project_name || ''}
             onChange={handleInputChange}
             required
           />
@@ -73,7 +102,7 @@ const CreateArchitectureProject: React.FC = () => {
           <textarea
             id="architecture_project_description"
             name="architecture_project_description"
-            value={formData.architecture_project_description}
+            value={formData.architecture_project_description || ''}
             onChange={handleInputChange}
             required
           />
@@ -85,50 +114,59 @@ const CreateArchitectureProject: React.FC = () => {
             type="date"
             id="start_date"
             name="start_date"
-            value={formData.start_date}
+            value={formData.start_date || ''}
             onChange={handleInputChange}
             required
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="permit_subtype">Tipo de Permiso</label>
+          <label htmlFor="permit_type">Tipo de Permiso</label>
           <select
-            id="permit_subtype"
-            name="permit_subtype"
-            value={formData.permit_subtype}
+            id="permit_type"
+            name="permit_type"
+            value={selectedPermitType || ''}
             onChange={handleInputChange}
             required
+            className={styles.select}
           >
             <option value="">Seleccione un tipo</option>
-            <option value="obra_nueva">Obra Nueva</option>
-            {/* Agregaremos más opciones cuando nos las proporcionen */}
+            {permitTypes && permitTypes.length > 0 ? (
+              permitTypes.map(type => (
+                <option key={type.id} value={type.id}>
+                  {type.permit_type}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>No hay tipos de permiso disponibles</option>
+            )}
           </select>
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              name="loteo_contruccion_simultanea"
-              checked={formData.loteo_contruccion_simultanea}
+        {selectedType && (
+          <div className={styles.formGroup}>
+            <label htmlFor="permit_subtype">Subtipo de Permiso</label>
+            <select
+              id="permit_subtype"
+              name="permit_subtype"
+              value={formData.permit_subtype || ''}
               onChange={handleInputChange}
-            />
-            Loteo Construcción Simultánea
-          </label>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              name="loteo_dfl2"
-              checked={formData.loteo_dfl2}
-              onChange={handleInputChange}
-            />
-            Loteo DFL2
-          </label>
-        </div>
+              required
+              className={styles.select}
+            >
+              <option value="">Seleccione un subtipo</option>
+              {Object.entries(selectedType.subtypes).map(([group, subtypes]) => (
+                <optgroup key={group} label={group}>
+                  {subtypes.map(subtype => (
+                    <option key={subtype.id} value={subtype.id}>
+                      {subtype.permit_sub_type}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className={styles.formGroup}>
           <label className={styles.checkboxLabel}>
@@ -143,11 +181,19 @@ const CreateArchitectureProject: React.FC = () => {
         </div>
 
         <div className={styles.formActions}>
-          <button type="button" onClick={() => navigate(`/proyectos/${id}`)}>
+          <button 
+            type="button" 
+            onClick={() => navigate(`/proyectos/${id}`)}
+            disabled={createArchitectureProject.isPending}
+          >
             Cancelar
           </button>
-          <button type="submit" className={styles.submitButton}>
-            Crear Proyecto
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={createArchitectureProject.isPending}
+          >
+            {createArchitectureProject.isPending ? 'Creando...' : 'Crear Proyecto'}
           </button>
         </div>
       </form>

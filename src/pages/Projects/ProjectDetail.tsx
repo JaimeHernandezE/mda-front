@@ -166,7 +166,7 @@ const ProjectDetail: React.FC = () => {
             
             {architectureProjects && architectureProjects.length > 0 ? (
               <div className={styles.architectureList}>
-                {architectureProjects.map(archProject => (
+                {architectureProjects?.map(archProject => (
                   <div key={archProject.id} className={styles.architectureItem}>
                     <Link to={`/proyectos/${id}/arquitectura/${archProject.id}`}>
                       {archProject.architecture_project_name}

@@ -1,17 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { ProjectCollaborator, CreateProjectCollaboratorDto, UpdateProjectCollaboratorDto } from '../types/project.types';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const useProjectCollaborators = (projectId?: number) => {
   const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
+
+  const axiosConfig = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
 
   // Obtener colaboradores de un proyecto
   const { data: collaborators, isLoading: isLoadingCollaborators } = useQuery<ProjectCollaborator[]>({
     queryKey: ['projectCollaborators', projectId],
     queryFn: async () => {
-      const response = await axios.get(`${API_URL}/projects/${projectId}/collaborators/`);
+      const response = await axios.get(`${API_URL}/projects/${projectId}/collaborators/`, axiosConfig);
       return response.data;
     },
     enabled: !!projectId,
@@ -22,7 +31,7 @@ export const useProjectCollaborators = (projectId?: number) => {
     return useQuery<ProjectCollaborator>({
       queryKey: ['projectCollaborators', projectId, collaboratorId],
       queryFn: async () => {
-        const response = await axios.get(`${API_URL}/projects/${projectId}/collaborators/${collaboratorId}/`);
+        const response = await axios.get(`${API_URL}/projects/${projectId}/collaborators/${collaboratorId}/`, axiosConfig);
         return response.data;
       },
       enabled: !!projectId && !!collaboratorId,
@@ -32,7 +41,7 @@ export const useProjectCollaborators = (projectId?: number) => {
   // Añadir un colaborador al proyecto
   const addCollaborator = useMutation({
     mutationFn: async (newCollaborator: CreateProjectCollaboratorDto) => {
-      const response = await axios.post(`${API_URL}/projects/${projectId}/collaborators/`, newCollaborator);
+      const response = await axios.post(`${API_URL}/projects/${projectId}/collaborators/`, newCollaborator, axiosConfig);
       return response.data;
     },
     onSuccess: () => {
@@ -43,7 +52,7 @@ export const useProjectCollaborators = (projectId?: number) => {
   // Actualizar un colaborador
   const updateCollaborator = useMutation({
     mutationFn: async ({ collaboratorId, data }: { collaboratorId: number; data: UpdateProjectCollaboratorDto }) => {
-      const response = await axios.put(`${API_URL}/projects/${projectId}/collaborators/${collaboratorId}/`, data);
+      const response = await axios.put(`${API_URL}/projects/${projectId}/collaborators/${collaboratorId}/`, data, axiosConfig);
       return response.data;
     },
     onSuccess: (_, variables) => {
@@ -55,7 +64,7 @@ export const useProjectCollaborators = (projectId?: number) => {
   // Eliminar un colaborador
   const removeCollaborator = useMutation({
     mutationFn: async (collaboratorId: number) => {
-      await axios.delete(`${API_URL}/projects/${projectId}/collaborators/${collaboratorId}/`);
+      await axios.delete(`${API_URL}/projects/${projectId}/collaborators/${collaboratorId}/`, axiosConfig);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectCollaborators', projectId] });

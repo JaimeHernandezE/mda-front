@@ -43,25 +43,4 @@ export interface CreateProjectCollaboratorDto {
   is_legal_rep?: boolean;
 }
 
-export interface UpdateProjectCollaboratorDto extends Partial<CreateProjectCollaboratorDto> {}
-
-export interface ArchitectureProject {
-  id: number;
-  project: number;
-  architecture_project_name?: string;
-  architecture_project_description?: string;
-  is_active: boolean;
-  start_date?: string;
-  created: string;
-  modified: string;
-}
-
-export interface CreateArchitectureProjectDto {
-  project: number;
-  architecture_project_name?: string;
-  architecture_project_description?: string;
-  is_active?: boolean;
-  start_date?: string;
-}
-
-export interface UpdateArchitectureProjectDto extends Partial<CreateArchitectureProjectDto> {} 
+export interface UpdateProjectCollaboratorDto extends Partial<CreateProjectCollaboratorDto> {} 
