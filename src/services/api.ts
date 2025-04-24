@@ -3,21 +3,43 @@ import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'ax
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 const API_VERSION = process.env.REACT_APP_API_VERSION || 'v1';
 
+// Función para obtener el token CSRF
+const getCookie = (name: string): string | null => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+};
+
+// Configuración global de axios
+axios.defaults.withCredentials = true;
+axios.defaults.xsrfCookieName = 'mdc_csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 export const api = axios.create({
   baseURL: `${API_URL}/api/${API_VERSION}`,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Request interceptor for API calls
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('auth_token');
+    const csrfToken = getCookie('mdc_csrftoken');
+    
     if (token) {
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    if (csrfToken) {
+      config.headers = config.headers || {};
+      config.headers['X-CSRFToken'] = csrfToken;
+    }
+    
     return config;
   },
   (error: AxiosError) => {
