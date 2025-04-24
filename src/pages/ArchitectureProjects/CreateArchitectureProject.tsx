@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useArchitectureProjectMutations } from '../../hooks/useArchitectureProjects';
 import { usePermitTypes } from '../../hooks/usePermitTypes';
-import { useArchitectureProjects } from '../../hooks/useArchitectureProjects';
 import { CreateArchitectureProjectDto } from '../../types/architecture.types';
 import styles from './CreateArchitectureProject.module.scss';
 
@@ -9,14 +9,14 @@ const CreateArchitectureProject: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { permitTypes, isLoading, isError, error } = usePermitTypes();
-  const { createArchitectureProject } = useArchitectureProjects(Number(id));
+  const { createArchitectureProject } = useArchitectureProjectMutations();
   
   const [formData, setFormData] = useState<CreateArchitectureProjectDto>({
     project: Number(id),
     architecture_project_name: '',
     architecture_project_description: '',
     is_active: true,
-    start_date: new Date().toISOString().split('T')[0],
+    start_date: '',
     permit_subtype: undefined
   });
 

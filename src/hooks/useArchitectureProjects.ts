@@ -5,7 +5,48 @@ import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export const useArchitectureProjects = (projectId?: number) => {
+// Hook para obtener los proyectos de arquitectura de un proyecto específico
+export const useProjectArchitectureProjects = (projectId?: number) => {
+  const { accessToken } = useAuth();
+  const axiosConfig = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return useQuery<ArchitectureProject[]>({
+    queryKey: ['architectureProjects', projectId],
+    queryFn: async () => {
+      const response = await axios.get(`${API_URL}/architecture-projects/?project=${projectId}`, axiosConfig);
+      return response.data;
+    },
+    enabled: !!projectId,
+  });
+};
+
+// Hook para obtener un proyecto de arquitectura específico
+export const useArchitectureProject = (architectureProjectId?: number) => {
+  const { accessToken } = useAuth();
+  const axiosConfig = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return useQuery<ArchitectureProject>({
+    queryKey: ['architectureProject', architectureProjectId],
+    queryFn: async () => {
+      const response = await axios.get(`${API_URL}/architecture-projects/${architectureProjectId}/`, axiosConfig);
+      return response.data;
+    },
+    enabled: !!architectureProjectId,
+  });
+};
+
+// Hook para las operaciones de mutación (crear, actualizar, eliminar)
+export const useArchitectureProjectMutations = () => {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
 
@@ -15,65 +56,38 @@ export const useArchitectureProjects = (projectId?: number) => {
       'Content-Type': 'application/json'
     }
   };
-  // Obtener proyectos de arquitectura de un proyecto
-  const { data: architectureProjects, isLoading: isLoadingArchitectureProjects } = useQuery<ArchitectureProject[]>({
-    queryKey: ['architectureProjects', projectId],
-    queryFn: async () => {
-      const response = await axios.get(`${API_URL}/architecture-projects/`, axiosConfig);
-      return response.data;
-    },
-    enabled: !!projectId,
-  });
 
-  // Obtener un proyecto de arquitectura específico
-  const useArchitectureProject = (architectureProjectId: number) => {
-    return useQuery<ArchitectureProject>({
-      queryKey: ['architectureProjects', projectId, architectureProjectId],
-      queryFn: async () => {
-        const response = await axios.get(`${API_URL}/architecture-projects/${architectureProjectId}/`, axiosConfig);
-        return response.data;
-      },
-      enabled: !!projectId && !!architectureProjectId,
-    });
-  };
-
-  // Crear un nuevo proyecto de arquitectura
   const createArchitectureProject = useMutation({
     mutationFn: async (newArchitectureProject: CreateArchitectureProjectDto) => {
       const response = await axios.post(`${API_URL}/architecture-projects/`, newArchitectureProject, axiosConfig);
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['architectureProjects', projectId] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['architectureProjects', variables.project] });
     },
   });
 
-  // Actualizar un proyecto de arquitectura
   const updateArchitectureProject = useMutation({
     mutationFn: async ({ architectureProjectId, data }: { architectureProjectId: number; data: UpdateArchitectureProjectDto }) => {
       const response = await axios.put(`${API_URL}/architecture-projects/${architectureProjectId}/`, data, axiosConfig);
       return response.data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['architectureProjects', projectId] });
-      queryClient.invalidateQueries({ queryKey: ['architectureProjects', projectId, variables.architectureProjectId] });
+      queryClient.invalidateQueries({ queryKey: ['architectureProject', variables.architectureProjectId] });
+      queryClient.invalidateQueries({ queryKey: ['architectureProjects'] });
     },
   });
 
-  // Eliminar un proyecto de arquitectura
   const deleteArchitectureProject = useMutation({
     mutationFn: async (architectureProjectId: number) => {
       await axios.delete(`${API_URL}/architecture-projects/${architectureProjectId}/`, axiosConfig);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['architectureProjects', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['architectureProjects'] });
     },
   });
 
   return {
-    architectureProjects,
-    isLoadingArchitectureProjects,
-    useArchitectureProject,
     createArchitectureProject,
     updateArchitectureProject,
     deleteArchitectureProject,

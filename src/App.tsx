@@ -15,7 +15,7 @@ import CreateProject from './pages/Projects/CreateProject';
 import ProjectList from './pages/Projects/ProjectList';
 import ProjectDetail from './pages/Projects/ProjectDetail';
 import CreateArchitectureProject from './pages/ArchitectureProjects/CreateArchitectureProject';
-
+import ArchitectureProjectDetail from './pages/ArchitectureProjects/ArchitectureProjectDetail';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { refetchOnWindowFocus: false, retry: 1 }
@@ -81,10 +81,17 @@ const App: React.FC = () => {
                     </Layout>
                   } />
                 } />
-                <Route path="/proyectos/:id/arquitectura/crear" element={
+                <Route path="/proyectos/:projectId/arquitectura/crear" element={
                   <ProtectedRoute element={
                     <Layout>
                       <CreateArchitectureProject />
+                    </Layout>
+                  } />
+                } />
+                <Route path="/proyectos/:projectId/arquitectura/:architectureId" element={
+                  <ProtectedRoute element={
+                    <Layout>
+                      <ArchitectureProjectDetail />
                     </Layout>
                   } />
                 } />

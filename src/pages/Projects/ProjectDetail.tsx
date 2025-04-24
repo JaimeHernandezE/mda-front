@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useProjects';
-import { useArchitectureProjects } from '../../hooks/useArchitectureProjects';
+import { useProjectArchitectureProjects } from '../../hooks/useArchitectureProjects';
 import styles from './ProjectDetail.module.scss';
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { projects, updateProject, deleteProject } = useProjects();
-  const { architectureProjects } = useArchitectureProjects(Number(id));
+  const { data: architectureProjects, isLoading: isLoadingArchProjects } = useProjectArchitectureProjects(Number(id));
   const project = projects?.find(p => p.id === Number(id));
 
   const [isEditing, setIsEditing] = useState(false);
