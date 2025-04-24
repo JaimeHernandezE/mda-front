@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useProjects';
+import { useArchitectureProjects } from '../../hooks/useArchitectureProjects';
 import styles from './ProjectDetail.module.scss';
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { projects, updateProject, deleteProject } = useProjects();
+  const { architectureProjects } = useArchitectureProjects(Number(id));
   const project = projects?.find(p => p.id === Number(id));
 
   const [isEditing, setIsEditing] = useState(false);
@@ -15,6 +17,10 @@ const ProjectDetail: React.FC = () => {
     project_description: project?.project_description || '',
     is_active: project?.is_active || true
   });
+
+  const handleCreateArchitectureProject = () => {
+    navigate(`/proyectos/${id}/arquitectura/crear`);
+  };
 
   if (!project) {
     return <div className={styles.container}>Proyecto no encontrado</div>;
@@ -147,6 +153,33 @@ const ProjectDetail: React.FC = () => {
           <div className={styles.detailItem}>
             <h3>Última Modificación</h3>
             <p>{new Date(project.modified).toLocaleDateString()}</p>
+          </div>
+
+          <div className={styles.architectureSection}>
+            <h2>Proyectos de Arquitectura</h2>
+            <button 
+              className={styles.createArchitectureButton}
+              onClick={handleCreateArchitectureProject}
+            >
+              Crear Nuevo Proyecto de Arquitectura
+            </button>
+            
+            {architectureProjects && architectureProjects.length > 0 ? (
+              <div className={styles.architectureList}>
+                {architectureProjects.map(archProject => (
+                  <div key={archProject.id} className={styles.architectureItem}>
+                    <Link to={`/proyectos/${id}/arquitectura/${archProject.id}`}>
+                      {archProject.architecture_project_name}
+                    </Link>
+                    <span className={styles.status}>
+                      {archProject.is_active ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.noProjects}>No hay proyectos de arquitectura creados</p>
+            )}
           </div>
         </div>
       )}
