@@ -1,9 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProjects } from '../../hooks/useProjects';
 import styles from './ProjectList.module.scss';
 
 const ProjectList: React.FC = () => {
+  const navigate = useNavigate();
   const { projects, isLoadingProjects } = useProjects();
+
+  const handleCreateProject = () => {
+    navigate('/proyectos/crear');
+  };
+
+  const handleViewProject = (projectId: number) => {
+    navigate(`/proyectos/${projectId}`);
+  };
 
   if (isLoadingProjects) {
     return <div className={styles.loading}>Cargando proyectos...</div>;
@@ -13,7 +23,12 @@ const ProjectList: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>Proyectos</h1>
-        <button className={styles.createButton}>Crear Proyecto</button>
+        <button 
+          className={styles.createButton}
+          onClick={handleCreateProject}
+        >
+          Crear Proyecto
+        </button>
       </div>
       <div className={styles.grid}>
         {projects?.map((project) => (
@@ -24,7 +39,12 @@ const ProjectList: React.FC = () => {
               <span className={styles.status}>
                 {project.is_active ? 'Activo' : 'Inactivo'}
               </span>
-              <button className={styles.viewButton}>Ver detalles</button>
+              <button 
+                className={styles.viewButton}
+                onClick={() => handleViewProject(project.id)}
+              >
+                Ver detalles
+              </button>
             </div>
           </div>
         ))}

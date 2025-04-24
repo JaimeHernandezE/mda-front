@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import Login from './pages/Login/Login';
 import CreateProject from './pages/Projects/CreateProject';
 import ProjectList from './pages/Projects/ProjectList';
+import ProjectDetail from './pages/Projects/ProjectDetail';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,6 +70,13 @@ const App: React.FC = () => {
                   <ProtectedRoute element={
                     <Layout>
                       <ProjectList />
+                    </Layout>
+                  } />
+                } />
+                <Route path="/proyectos/:id" element={
+                  <ProtectedRoute element={
+                    <Layout>
+                      <ProjectDetail />
                     </Layout>
                   } />
                 } />
