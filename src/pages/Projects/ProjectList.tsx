@@ -11,17 +11,20 @@ const ProjectList: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Proyectos</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Proyectos</h1>
+        <button className={styles.createButton}>Crear Proyecto</button>
+      </div>
       <div className={styles.grid}>
         {projects?.map((project) => (
           <div key={project.id} className={styles.card}>
             <h2 className={styles.cardTitle}>{project.project_name}</h2>
             <p className={styles.cardDescription}>{project.project_description}</p>
             <div className={styles.cardFooter}>
-              <span className={styles.cardDate}>
-                Creado: {new Date(project.created).toLocaleDateString()}
+              <span className={styles.status}>
+                {project.is_active ? 'Activo' : 'Inactivo'}
               </span>
-              <button className={styles.cardButton}>Ver detalles</button>
+              <button className={styles.viewButton}>Ver detalles</button>
             </div>
           </div>
         ))}

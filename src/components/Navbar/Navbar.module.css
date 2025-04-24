@@ -1,12 +1,12 @@
 .navbar {
   background-color: #242424 !important;
   color: rgba(255, 255, 255, 0.87) !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
   z-index: 1200 !important;
 }
 
 .menuButton {
-  margin-right: 24px;
+  margin-right: 1rem;
 }
 
 .title {
@@ -19,7 +19,7 @@
   position: relative;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.08);
-  margin-left: 32px;
+  margin-left: 1.5rem;
   width: 300px;
   display: flex;
   align-items: center;
@@ -28,7 +28,7 @@
   background-color: rgba(255, 255, 255, 0.12);
 }
 .search .searchIcon {
-  padding: 16px;
+  padding: 0.5rem;
   height: 100%;
   position: absolute;
   display: flex;
@@ -38,7 +38,7 @@
 }
 .search .searchInput {
   color: rgba(255, 255, 255, 0.87);
-  padding: 16px 16px 16px calc(1em + 32px);
+  padding: 0.5rem 0.5rem 0.5rem calc(1em + 1.5rem);
   width: 100%;
   background: none;
   border: none;
@@ -57,14 +57,14 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 0.5rem;
 }
 
 .avatar {
   width: 32px;
   height: 32px;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s;
 }
 .avatar:hover {
   opacity: 0.8;
@@ -73,7 +73,7 @@
 .loginButton, .logoutButton {
   text-transform: none;
   font-weight: 500;
-  padding: 8px 24px;
+  padding: 0.25rem 1rem;
   border-radius: 4px;
 }
 .loginButton:hover, .logoutButton:hover {
@@ -83,7 +83,7 @@
 @media (max-width: 900px) {
   .search {
     width: 200px;
-    margin-left: 24px;
+    margin-left: 1rem;
   }
   .logoutButton {
     display: none;

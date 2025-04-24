@@ -13,14 +13,15 @@
   display: flex;
   flex: 1;
   position: relative;
-  padding-top: 64px;
+  padding-top: 15px;
   min-height: calc(100vh - 64px);
   width: 100%;
+  margin-left: 40px;
 }
 
 .main {
   flex: 1;
-  padding: 32px;
+  padding: 0;
   transition: all 0.3s ease-in-out;
   margin-left: 72px;
   display: flex;
@@ -36,7 +37,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -52,7 +53,7 @@
 
 @media (min-width: 900px) {
   .main {
-    padding: 24px;
+    padding: 0;
     margin-left: 72px;
     width: calc(100% - 72px);
   }
@@ -61,15 +62,15 @@
     width: calc(100% - 240px);
   }
   .main .container {
-    padding: 0 24px;
+    padding: 0;
   }
 }
 @media (min-width: 600px) {
   .content {
-    padding-top: 64px;
+    padding-top: 15px;
   }
   .main {
-    padding: 16px;
+    padding: 0;
     margin-left: 0;
     width: 100%;
   }
@@ -78,6 +79,6 @@
     width: 100%;
   }
   .main .container {
-    padding: 0 16px;
+    padding: 0;
   }
 }/*# sourceMappingURL=Layout.module.css.map */

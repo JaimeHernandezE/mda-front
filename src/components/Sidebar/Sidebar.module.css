@@ -10,7 +10,7 @@
   box-shadow: 1px 0 2px rgba(0, 0, 0, 0.05);
   overflow-y: auto;
   overflow-x: hidden;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid #e0e0e0;
   display: block !important;
 }
 .sidebar.collapsed {
@@ -28,15 +28,15 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0 1rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 .toggleButton button {
   color: rgba(0, 0, 0, 0.87);
 }
 
 .menuList {
-  padding: 16px 0;
+  padding: 0.25rem 0;
 }
 
 .menuLink {
@@ -46,22 +46,23 @@
 }
 
 .menuItem {
-  padding: 16px 24px;
-  margin: 8px 8px;
+  padding: 0.25rem;
+  padding-left: 0.5rem;
+  margin: 0.25rem 0;
   border-radius: 12px;
   transition: all 0.3s ease-in-out;
   display: flex;
   align-items: center;
   color: rgba(0, 0, 0, 0.6);
   cursor: pointer;
-  gap: 16px;
+  gap: 0.5rem;
 }
 .menuItem:hover {
   background-color: #FFFFFF;
   color: rgba(0, 0, 0, 0.87);
 }
 .menuItem.active {
-  background-color: #6C63FF;
+  background-color: #1976d2;
   color: white;
 }
 .menuItem.active .menuIcon {
@@ -69,34 +70,35 @@
 }
 
 .submenuList {
-  padding-left: 8px;
+  padding-left: 1rem;
 }
 
 .submenuItem {
-  padding: 8px 8px;
-  margin: 8px 8px;
+  padding: 0.25rem;
+  padding-left: 0.25rem;
+  margin: 0.25rem 0;
   border-radius: 8px;
   transition: all 0.3s ease-in-out;
   display: flex;
   align-items: center;
   color: rgba(0, 0, 0, 0.6);
   font-size: 0.9rem;
-  gap: 16px;
+  gap: 0.5rem;
 }
 .submenuItem:hover {
   background-color: #FFFFFF;
   color: rgba(0, 0, 0, 0.87);
 }
 .submenuItem.active {
-  background-color: rgba(108, 99, 255, 0.1);
-  color: #6C63FF;
+  background-color: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
 }
 .submenuItem.active .menuIcon {
-  color: #6C63FF;
+  color: #1976d2;
 }
 
 .menuIcon {
-  min-width: 50px;
+  min-width: 24px;
   color: currentColor;
   margin-right: 0;
   display: flex;
@@ -110,6 +112,7 @@
 .menuText span {
   font-weight: 500;
   font-size: 0.9rem;
+  max-width: 120px;
 }
 
 @media (min-width: 600px) {
