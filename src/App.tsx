@@ -1,48 +1,62 @@
-// src/App.tsx
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '@mui/material/styles';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import theme from './utils/theme';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@mui/material/styles";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import theme from "./utils/theme";
 
-// Context y páginas
-import { AuthProvider, useAuth } from './context/AuthContext';
-import Layout from './components/Layout/Layout';
-import PublicLayout from './components/Layout/PublicLayout';
-import Home from './pages/Home';
-import Login from './pages/Login/Login';
-import Landing from './pages/Landing/Landing';
-import CreateProject from './pages/Projects/CreateProject';
-import ProjectList from './pages/Projects/ProjectList';
-import ProjectDetail from './pages/Projects/ProjectDetail';
-import CreateArchitectureProject from './pages/ArchitectureProjects/CreateArchitectureProject';
-import ArchitectureProjectDetail from './pages/ArchitectureProjects/ArchitectureProjectDetail';
+// ↳ Contextos y páginas
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import Layout from "./components/Layout/Layout";
+import PublicLayout from "./components/Layout/PublicLayout";
+import Home from "./pages/Home";
+import Login from "./pages/Login/Login";
+import Landing from "./pages/Landing/Landing";
+import CreateProject from "./pages/Projects/CreateProject";
+import ProjectList from "./pages/Projects/ProjectList";
+import ProjectDetail from "./pages/Projects/ProjectDetail";
+import CreateArchitectureProject from "./pages/ArchitectureProjects/CreateArchitectureProject";
+import ArchitectureProjectDetail from "./pages/ArchitectureProjects/ArchitectureProjectDetail";
+
+/** ────────────────────────────────────────────────────────────────────────────
+ *  🎛️  React‑Query client (sin refetch on focus)
+ * ───────────────────────────────────────────────────────────────────────────*/
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { refetchOnWindowFocus: false, retry: 1 }
-  }
+    queries: { refetchOnWindowFocus: false, retry: 1 },
+  },
 });
 
-// Verificar que la variable de entorno esté definida
-const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-if (!googleClientId) {
-  console.error('REACT_APP_GOOGLE_CLIENT_ID no está definida en el archivo .env');
-}
-
-// Ruta protegida
-const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => {
+/** ────────────────────────────────────────────────────────────────────────────
+ *  🔐  Layout protegido + outlet
+ *      ‣ Encapsula <Layout/> y aplica autenticación en un solo lugar
+ * ───────────────────────────────────────────────────────────────────────────*/
+const ProtectedLayout: React.FC = () => {
   const { accessToken } = useAuth();
-  return accessToken ? <>{element}</> : <Navigate to="/login" replace />;
+  if (!accessToken) return <Navigate to="/login" replace />;
+  return (
+    <Layout>
+      {/*  Todas las rutas hijas se renderizarán aquí */}
+      <Outlet />
+    </Layout>
+  );
 };
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
 
 const App: React.FC = () => {
   if (!googleClientId) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <div style={{ padding: "20px", textAlign: "center" }}>
         <h1>Error de configuración</h1>
-        <p>El ID de cliente de Google no está configurado correctamente.</p>
-        <p>Por favor, verifica el archivo .env y reinicia la aplicación.</p>
+        <p>El ID de cliente de Google no está configurado.</p>
+        <p>Agrega VITE_GOOGLE_CLIENT_ID al archivo .env y reinicia.</p>
       </div>
     );
   }
@@ -54,54 +68,47 @@ const App: React.FC = () => {
           <Router future={{ v7_relativeSplatPath: true }}>
             <AuthProvider>
               <Routes>
-                <Route path="/" element={
-                  <PublicLayout>
-                    <Landing />
-                  </PublicLayout>
-                } />
+                {/* ───────── Public ‐‐ landing y login ───────── */}
+                <Route
+                  path="/"
+                  element={
+                    <PublicLayout>
+                      <Landing />
+                    </PublicLayout>
+                  }
+                />
                 <Route path="/login" element={<Login />} />
-                <Route path="/home" element={
-                  <ProtectedRoute element={
-                    <Layout>
-                      <Home />
-                    </Layout>
-                  } />
-                } />
-                <Route path="/proyectos/crear" element={
-                  <ProtectedRoute element={
-                    <Layout>
-                      <CreateProject />
-                    </Layout>
-                  } />
-                } />
-                <Route path="/proyectos/lista" element={
-                  <ProtectedRoute element={
-                    <Layout>
-                      <ProjectList />
-                    </Layout>
-                  } />
-                } />
-                <Route path="/proyectos/:id" element={
-                  <ProtectedRoute element={
-                    <Layout>
-                      <ProjectDetail />
-                    </Layout>
-                  } />
-                } />
-                <Route path="/proyectos/:projectId/arquitectura/crear" element={
-                  <ProtectedRoute element={
-                    <Layout>
-                      <CreateArchitectureProject />
-                    </Layout>
-                  } />
-                } />
-                <Route path="/proyectos/:projectId/arquitectura/:architectureId" element={
-                  <ProtectedRoute element={
-                    <Layout>
-                      <ArchitectureProjectDetail />
-                    </Layout>
-                  } />
-                } />
+
+                {/* ───────── Protected ‐‐ todo lo demás ───────── */}
+                <Route element={<ProtectedLayout />}>
+                  <Route path="home" element={<Home />} />
+
+                  {/*  Agrupamos las rutas de proyectos  */}
+                  <Route path="proyectos">
+                    {/* /proyectos/crear */}
+                    <Route path="crear" element={<CreateProject />} />
+
+                    {/* /proyectos/lista */}
+                    <Route path="lista" element={<ProjectList />} />
+
+                    {/* /proyectos/:projectId  */}
+                    <Route path=":projectId" element={<ProjectDetail />}>
+                      {/*  /proyectos/:projectId/arquitectura/*  */}
+                      <Route path="arquitectura">
+                        {/* /proyectos/:projectId/arquitectura/crear */}
+                        <Route path="crear" element={<CreateArchitectureProject />} />
+
+                        {/* /proyectos/:projectId/arquitectura/:architectureId */}
+                        <Route
+                          path=":architectureId"
+                          element={<ArchitectureProjectDetail />}
+                        />
+                      </Route>
+                    </Route>
+                  </Route>
+                </Route>
+
+                {/* fallback */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </AuthProvider>
