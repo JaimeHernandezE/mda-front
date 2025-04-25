@@ -25,7 +25,7 @@ import CreateArchitectureProject from "./pages/ArchitectureProjects/CreateArchit
 import ArchitectureProjectDetail from "./pages/ArchitectureProjects/ArchitectureProjectDetail";
 
 /** ────────────────────────────────────────────────────────────────────────────
- *  🎛️  React‑Query client (sin refetch on focus)
+ *  🎛️  React‑Query client (sin refetch on focus)
  * ───────────────────────────────────────────────────────────────────────────*/
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,7 +48,11 @@ const ProtectedLayout: React.FC = () => {
   );
 };
 
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
+// Verificar que la variable de entorno esté definida
+const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+if (!googleClientId) {
+  console.error('REACT_APP_GOOGLE_CLIENT_ID no está definida en el archivo .env');
+}
 
 const App: React.FC = () => {
   if (!googleClientId) {
@@ -92,18 +96,15 @@ const App: React.FC = () => {
                     <Route path="lista" element={<ProjectList />} />
 
                     {/* /proyectos/:projectId  */}
-                    <Route path=":projectId" element={<ProjectDetail />}>
-                      {/*  /proyectos/:projectId/arquitectura/*  */}
-                      <Route path="arquitectura">
-                        {/* /proyectos/:projectId/arquitectura/crear */}
-                        <Route path="crear" element={<CreateArchitectureProject />} />
+                    <Route path=":projectId" element={<ProjectDetail />} />
 
-                        {/* /proyectos/:projectId/arquitectura/:architectureId */}
-                        <Route
-                          path=":architectureId"
-                          element={<ArchitectureProjectDetail />}
-                        />
-                      </Route>
+                    {/* /proyectos/:projectId/arquitectura/*  */}
+                    <Route path=":projectId/arquitectura">
+                      {/* /proyectos/:projectId/arquitectura/crear */}
+                      <Route path="crear" element={<CreateArchitectureProject />} />
+
+                      {/* /proyectos/:projectId/arquitectura/:architectureId */}
+                      <Route path=":architectureId" element={<ArchitectureProjectDetail />} />
                     </Route>
                   </Route>
                 </Route>

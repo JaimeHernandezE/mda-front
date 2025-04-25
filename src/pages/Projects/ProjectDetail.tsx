@@ -5,11 +5,11 @@ import { useProjectArchitectureProjects } from '../../hooks/useArchitectureProje
 import styles from './ProjectDetail.module.scss';
 
 const ProjectDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, updateProject, deleteProject } = useProjects();
-  const { data: architectureProjects, isLoading: isLoadingArchProjects } = useProjectArchitectureProjects(Number(id));
-  const project = projects?.find(p => p.id === Number(id));
+  const { data: architectureProjects, isLoading: isLoadingArchProjects } = useProjectArchitectureProjects(Number(projectId));
+  const project = projects?.find(p => p.id === Number(projectId));
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ const ProjectDetail: React.FC = () => {
   });
 
   const handleCreateArchitectureProject = () => {
-    navigate(`/proyectos/${id}/arquitectura/crear`);
+    navigate(`/proyectos/${projectId}/arquitectura/crear`);
   };
 
   if (!project) {
@@ -168,7 +168,7 @@ const ProjectDetail: React.FC = () => {
               <div className={styles.architectureList}>
                 {architectureProjects?.map(archProject => (
                   <div key={archProject.id} className={styles.architectureItem}>
-                    <Link to={`/proyectos/${id}/arquitectura/${archProject.id}`}>
+                    <Link to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}>
                       {archProject.architecture_project_name}
                     </Link>
                     <span className={styles.status}>
