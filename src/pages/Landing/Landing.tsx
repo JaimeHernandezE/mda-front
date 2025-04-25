@@ -1,46 +1,73 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import styles from './Landing.module.scss';
+import React from "react";
+import { Link } from "react-router-dom";
+import styles from "./Landing.module.scss";
+import logo from "../../assets/images/logo-mda.png";
 
 const Landing: React.FC = () => {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
+        {/* ───── Hero / encabezado ───── */}
         <section className={styles.heroSection}>
           <div className={styles.logoContainer}>
-            {/* Aquí irá el logo cuando lo tengamos */}
-            <div className={styles.logoPlaceholder}>MDA</div>
+            {/* Logo oficial de Manual de Arquitectura */}
+            <img
+              src={logo}
+              alt="Logotipo Manual de Arquitectura (MDA)"
+              className={styles.logoImage}
+            />
           </div>
+
           <h1>Manual de Arquitectura</h1>
           <p className={styles.subtitle}>
-            Una plataforma intuitiva para registrar y dar seguimiento a tu
-            proyectos de arquitectura y construcción
+            Centraliza trámites, controla entregables y mantente al día con la
+            normativa —todo desde un solo lugar.
           </p>
         </section>
 
+        {/* ───── Características ───── */}
         <section className={styles.features}>
           <h2>¿Qué ofrecemos?</h2>
+
           <div className={styles.featureGrid}>
             <div className={styles.featureCard}>
-              <h3>Registro Diario</h3>
-              <p>Documenta tus avances, ideas y reflexiones en un formato estructurado y fácil de usar</p>
+              <h3>Normativa al Día</h3>
+              <p>
+                Explora OGUC, Decretos y circulares con buscador inteligente,
+                resaltado de cambios y enlaces cruzados. Trabaja siempre con la
+                versión vigente.
+              </p>
             </div>
+
             <div className={styles.featureCard}>
-              <h3>Seguimiento de Progreso</h3>
-              <p>Visualiza tu evolución a lo largo del tiempo y mantén un registro de tus logros</p>
+              <h3>Tramitación Guiada</h3>
+              <p>
+                Genera cada formulario con check‑lists automáticos, validaciones
+                por IA y plantillas listas para que tu presentación en la DOM
+                salga a la primera.
+              </p>
             </div>
+
             <div className={styles.featureCard}>
-              <h3>Organización Personal</h3>
-              <p>Mantén tus notas organizadas por temas, fechas y categorías para un acceso rápido</p>
+              <h3>Alertas y Seguimiento</h3>
+              <p>
+                Activa notificaciones y monitorea en un panel el avance de tus
+                permisos y recepciones.
+              </p>
             </div>
           </div>
         </section>
 
+        {/* ───── CTA ───── */}
         <section className={styles.cta}>
-          <h2>Comienza tu viaje de aprendizaje hoy</h2>
-          <p>Únete a nuestra comunidad y empieza a documentar tu progreso</p>
+          <h2>Impulsa tu próximo proyecto con MDA</h2>
+          <p>
+            Crea tu cuenta gratuita y descubre cómo simplificamos cada paso del
+            proceso constructivo.
+          </p>
+
           <Link to="/login" className={styles.ctaButton}>
-            Iniciar Sesión
+            Empezar ahora
           </Link>
         </section>
       </main>
@@ -48,4 +75,4 @@ const Landing: React.FC = () => {
   );
 };
 
-export default Landing; 
+export default Landing;

@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@import '../../styles/_variables.scss';
 
 .container {
   min-height: 100vh;
@@ -9,7 +9,7 @@
 .main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
 }
 
 .heroSection {
@@ -18,29 +18,31 @@
   
   h1 {
     font-size: 2.5rem;
-    color: $primary-color;
-    margin: 1rem 0;
+    color: #1e3d59;
+    margin: 0;
+    font-weight: 600;
   }
 }
 
 .logoContainer {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.logoPlaceholder {
-  font-size: 3rem;
-  font-weight: bold;
-  color: $primary-color;
-  background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.logoImage {
+  width: 250px;
+  height: auto;
+  margin-bottom: 0rem;
 }
 
 .subtitle {
   font-size: 1.2rem;
-  color: $text-secondary;
+  color: #666666;
   max-width: 600px;
   margin: 1rem auto;
+  line-height: 1.6;
 }
 
 .features {
@@ -51,14 +53,15 @@
 
   h2 {
     text-align: center;
-    color: $text-primary;
+    color: #1e3d59;
     margin-bottom: 3rem;
+    font-size: 2rem;
   }
 }
 
 .featureGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   padding: 0 2rem;
 }
@@ -75,12 +78,13 @@
   }
 
   h3 {
-    color: $primary-color;
+    color: #1e3d59;
     margin-bottom: 1rem;
+    font-size: 1.25rem;
   }
 
   p {
-    color: $text-secondary;
+    color: #666666;
     line-height: 1.6;
   }
 }
@@ -90,12 +94,13 @@
   padding: 4rem 0;
 
   h2 {
-    color: $text-primary;
+    color: #1e3d59;
     margin-bottom: 1rem;
+    font-size: 2rem;
   }
 
   p {
-    color: $text-secondary;
+    color: #666666;
     margin-bottom: 2rem;
   }
 }
@@ -103,7 +108,7 @@
 .ctaButton {
   display: inline-block;
   padding: 1rem 2rem;
-  background-color: $primary-color;
+  background-color: #1e3d59;
   color: white;
   text-decoration: none;
   border-radius: 0.5rem;
@@ -111,6 +116,6 @@
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: darken(#1e3d59, 10%);
   }
 } 
