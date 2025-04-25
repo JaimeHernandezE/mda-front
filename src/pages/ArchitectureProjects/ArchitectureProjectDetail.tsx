@@ -89,7 +89,7 @@ const ArchitectureProjectDetail: React.FC = () => {
               <strong>Fecha de inicio:</strong> {project.start_date ? new Date(project.start_date).toLocaleDateString() : 'No definida'}
             </p>
             <p>
-              <strong>Subtipo de permiso:</strong> {project.permit_subtype}
+              <strong>Subtipo de permiso:</strong> {project.permit_subtype_name}
             </p>
           </section>
         </main>

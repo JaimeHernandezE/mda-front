@@ -1,6 +1,9 @@
+@use '../../styles/variables' as *;
+@use 'sass:color';
+
 .container {
-  padding: 2rem;
-  max-width: 1200px;
+  padding: $spacing-xl;
+  max-width: $container-width;
   margin: 0 auto;
 }
 
@@ -8,203 +11,205 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: $spacing-xl;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-color;
 
   .headerContent {
     h1 {
       margin: 0;
-      color: #333;
-      font-size: 2rem;
+      color: $text-primary;
+      font-size: $font-size-xl;
     }
   }
 
   .backButton {
-    padding: 0.5rem 1rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    color: #495057;
+    padding: $spacing-sm $spacing-md;
+    background-color: $background-paper;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    color: $text-primary;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+    font-size: $font-size-sm;
+    transition: all $transition-fast;
 
     &:hover {
-      background-color: #e9ecef;
-      border-color: #ced4da;
+      background-color: color.adjust($background-light, $lightness: -5%);
+      border-color: color.adjust($border-color, $lightness: -10%);
     }
   }
 }
 
 .status {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  background-color: #f5f5f5;
-  color: #666;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-sm;
+  background-color: $background-light;
+  color: $text-primary;
 }
 
 .content {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
 }
 
 .mainInfo {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  background-color: $background-paper;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
+  padding: $spacing-lg;
 }
 
 .infoSection {
   h2 {
-    color: #333;
-    margin-bottom: 1rem;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
   }
 
   p {
-    margin: 0.5rem 0;
-    color: #666;
+    margin: $spacing-sm 0;
+    color: $text-primary;
 
     strong {
-      color: #333;
+      color: $text-primary;
     }
   }
 }
 
 .sideMenu {
   .menuSection {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: $background-paper;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-md;
     overflow: hidden;
+    font-size: $font-size-sm;
   }
 }
 
 .menuButton {
   width: 100%;
-  padding: 1rem;
+  padding: $spacing-md;
   text-align: left;
-  background-color: #f8f9fa;
+  background-color: $background-paper;
   border: none;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid $border-color;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: background-color $transition-fast;
+  font-size: $font-size-base;
 
   &:hover {
-    background-color: #e9ecef;
+    background-color: color.adjust($background-light, $lightness: -5%);
   }
 
   &.active {
-    background-color: #e9ecef;
+    background-color: color.adjust($background-light, $lightness: -5%);
   }
 }
 
 .subMenu {
-  padding-left: 1rem;
+  padding-left: $spacing-md;
 }
 
 .subMenuButton {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: $spacing-sm $spacing-md;
   text-align: left;
   background-color: transparent;
   border: none;
   cursor: pointer;
-  font-size: 0.95rem;
-  color: #495057;
-  transition: background-color 0.2s;
+  font-size: $font-size-sm;
+  color: $text-primary;
+  transition: background-color $transition-fast;
 
   &:hover {
-    background-color: #f8f9fa;
+    background-color: $background-light;
   }
 
   &.active {
-    background-color: #f8f9fa;
+    background-color: $background-light;
     font-weight: 500;
   }
 }
 
 .subSubMenu {
-  padding-left: 1rem;
+  padding-left: $spacing-md;
 }
 
 .subSubMenuButton {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: $spacing-sm $spacing-md;
   text-align: left;
   background-color: transparent;
   border: none;
   cursor: pointer;
-  font-size: 0.9rem;
-  color: #6c757d;
-  transition: background-color 0.2s;
+  font-size: $font-size-sm;
+  color: $text-primary;
+  transition: background-color $transition-fast;
 
   &:hover {
-    background-color: #f8f9fa;
+    background-color: $background-light;
   }
 }
 
 .actions {
-  padding: 0.5rem 1rem 0.5rem 2rem;
+  padding: $spacing-sm $spacing-md $spacing-sm $spacing-xl;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: $spacing-sm;
 }
 
 .actionLink {
   text-decoration: none;
-  color: #0d6efd;
-  font-size: 0.9rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  color: $primary-color;
+  font-size: $font-size-sm;
+  padding: $spacing-sm;
+  border-radius: $border-radius-sm;
+  transition: background-color $transition-fast;
 
   &:hover {
-    background-color: #f8f9fa;
+    background-color: $background-light;
     text-decoration: underline;
   }
 }
 
 .loading,
 .error {
-  padding: 2rem;
+  padding: $spacing-xl;
   text-align: center;
   max-width: 600px;
-  margin: 2rem auto;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: $spacing-xl auto;
+  background-color: $background-paper;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
 
   h2 {
-    color: #333;
-    margin-bottom: 1rem;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
   }
 
   p {
-    color: #666;
-    margin-bottom: 1.5rem;
+    color: $text-primary;
+    margin-bottom: $spacing-lg;
   }
 
   button {
-    padding: 0.5rem 1rem;
-    background-color: #0d6efd;
-    color: white;
+    padding: $spacing-sm $spacing-md;
+    background-color: $primary-color;
+    color: $white;
     border: none;
-    border-radius: 4px;
+    border-radius: $border-radius-sm;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: $font-size-base;
 
     &:hover {
-      background-color: #0b5ed7;
+      background-color: color.adjust($primary-color, $lightness: -10%);
     }
   }
 }
 
 .error {
   h2 {
-    color: #dc3545;
+    color: $error-color;
   }
 } 

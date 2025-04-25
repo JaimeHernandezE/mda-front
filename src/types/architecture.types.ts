@@ -10,6 +10,7 @@ export interface ArchitectureProject {
   is_active: boolean;
   start_date: string | null;
   permit_subtype: number | null;
+  permit_subtype_name: string | null;
 }
 
 export interface CreateArchitectureProjectDto {
