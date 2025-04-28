@@ -3,6 +3,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useArchitectureProject } from '../../hooks/useArchitectureProjects';
 import styles from './ArchitectureProjectDetail.module.scss';
 import classNames from 'classnames';
+import { 
+  Home as HomeIcon,
+  AttachMoney as BudgetIcon,
+  People as PeopleIcon
+} from '@mui/icons-material';
 
 type MenuId = 'constructiveSolutions';
 type SubMenuId = 'fireSolutions';
@@ -18,9 +23,6 @@ const ArchitectureProjectDetail: React.FC = () => {
   const { data: project, isLoading, isError, error } = useArchitectureProject(
     architectureId ? Number(architectureId) : undefined
   );
-
-  console.log('Architecture Project ID:', architectureId);
-  console.log('Project Data:', project);
 
   const handleMenuClick = (menuId: MenuId) => {
     setActiveMenu(activeMenu === menuId ? null : menuId);
@@ -96,59 +98,86 @@ const ArchitectureProjectDetail: React.FC = () => {
 
         <aside className={styles.sideMenu}>
           <div className={styles.menuSection}>
-            <button
-              className={classNames(styles.menuButton, {
-                [styles.active]: activeMenu === 'constructiveSolutions'
-              })}
-              onClick={() => handleMenuClick('constructiveSolutions')}
+            <Link 
+              to={`/proyectos/${projectId}/arquitectura/${architectureId}/propiedad`}
+              className={styles.menuButton}
             >
-              Soluciones constructivas
-            </button>
-
-            {activeMenu === 'constructiveSolutions' && (
-              <div className={styles.subMenu}>
-                <button
-                  className={classNames(styles.subMenuButton, {
-                    [styles.active]: activeSubMenu === 'fireSolutions'
-                  })}
-                  onClick={() => handleSubMenuClick('fireSolutions')}
-                >
-                  Soluciones contra el fuego
-                </button>
-
-                {activeSubMenu === 'fireSolutions' && (
-                  <div className={styles.subSubMenu}>
-                    <button
-                      className={classNames(styles.subSubMenuButton, {
-                        [styles.active]: activeSubSubMenu === 'additiveMethod'
-                      })}
-                      onClick={() => handleSubSubMenuClick('additiveMethod')}
-                    >
-                      Método aditivo de componentes
-                    </button>
-
-                    {activeSubSubMenu === 'additiveMethod' && (
-                      <div className={styles.actions}>
-                        <Link 
-                          to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/crear`}
-                          className={styles.actionLink}
-                        >
-                          Crear Solución
-                        </Link>
-                        <Link 
-                          to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/lista`}
-                          className={styles.actionLink}
-                        >
-                          Listar Soluciones
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+              <HomeIcon className={styles.icon} />
+              Propiedad
+            </Link>
+            <Link 
+              to={`/proyectos/${projectId}/arquitectura/${architectureId}/presupuestos`}
+              className={styles.menuButton}
+            >
+              <BudgetIcon className={styles.icon} />
+              Presupuestos
+            </Link>
+            <Link 
+              to={`/proyectos/${projectId}/arquitectura/${architectureId}/profesionales`}
+              className={styles.menuButton}
+            >
+              <PeopleIcon className={styles.icon} />
+              Propietario / Profesionales
+            </Link>
           </div>
         </aside>
+      </div>
+
+      <div className={styles.constructiveSolutions}>
+        <h2>Soluciones Constructivas</h2>
+        <div className={styles.menuSection}>
+          <button
+            className={classNames(styles.menuButton, {
+              [styles.active]: activeMenu === 'constructiveSolutions'
+            })}
+            onClick={() => handleMenuClick('constructiveSolutions')}
+          >
+            Soluciones constructivas
+          </button>
+
+          {activeMenu === 'constructiveSolutions' && (
+            <div className={styles.subMenu}>
+              <button
+                className={classNames(styles.subMenuButton, {
+                  [styles.active]: activeSubMenu === 'fireSolutions'
+                })}
+                onClick={() => handleSubMenuClick('fireSolutions')}
+              >
+                Soluciones contra el fuego
+              </button>
+
+              {activeSubMenu === 'fireSolutions' && (
+                <div className={styles.subSubMenu}>
+                  <button
+                    className={classNames(styles.subSubMenuButton, {
+                      [styles.active]: activeSubSubMenu === 'additiveMethod'
+                    })}
+                    onClick={() => handleSubSubMenuClick('additiveMethod')}
+                  >
+                    Método aditivo de componentes
+                  </button>
+
+                  {activeSubSubMenu === 'additiveMethod' && (
+                    <div className={styles.actions}>
+                      <Link 
+                        to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/crear`}
+                        className={styles.actionLink}
+                      >
+                        Crear Solución
+                      </Link>
+                      <Link 
+                        to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/lista`}
+                        className={styles.actionLink}
+                      >
+                        Listar Soluciones
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

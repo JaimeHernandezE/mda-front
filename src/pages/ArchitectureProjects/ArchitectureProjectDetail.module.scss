@@ -1,9 +1,10 @@
 @use '../../styles/variables' as *;
+@use '../../styles/buttons' as *;
 @use 'sass:color';
 
 .container {
-  padding: $spacing-xl;
-  max-width: $container-width;
+  padding: $spacing-lg;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -11,205 +12,162 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $spacing-xl;
+  margin-bottom: $spacing-lg;
   padding-bottom: $spacing-md;
   border-bottom: 1px solid $border-color;
 
   .headerContent {
     h1 {
       margin: 0;
-      color: $text-primary;
+      color: $primary-color;
       font-size: $font-size-xl;
+    }
+
+    .status {
+      color: $text-secondary;
+      font-size: $font-size-sm;
+      margin-top: $spacing-xs;
     }
   }
 
   .backButton {
+    @include button-primary;
     padding: $spacing-sm $spacing-md;
-    background-color: $background-paper;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-sm;
-    color: $text-primary;
-    cursor: pointer;
-    font-size: $font-size-sm;
-    transition: all $transition-fast;
-
-    &:hover {
-      background-color: color.adjust($background-light, $lightness: -5%);
-      border-color: color.adjust($border-color, $lightness: -10%);
-    }
   }
-}
-
-.status {
-  padding: $spacing-sm $spacing-md;
-  border-radius: $border-radius-sm;
-  background-color: $background-light;
-  color: $text-primary;
 }
 
 .content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-xl;
+  grid-template-columns: 2fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
 }
 
 .mainInfo {
-  background-color: $background-paper;
-  border-radius: $border-radius-md;
-  box-shadow: $shadow-md;
-  padding: $spacing-lg;
-}
+  .infoSection {
+    background: $background-light;
+    padding: $spacing-lg;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-md;
 
-.infoSection {
-  h2 {
-    color: $text-primary;
-    margin-bottom: $spacing-md;
-  }
+    h2 {
+      color: $primary-color;
+      margin-bottom: $spacing-md;
+      font-size: $font-size-xl;
+    }
 
-  p {
-    margin: $spacing-sm 0;
-    color: $text-primary;
-
-    strong {
+    p {
+      margin: $spacing-sm 0;
       color: $text-primary;
+      line-height: 1.6;
     }
   }
 }
 
 .sideMenu {
   .menuSection {
-    background-color: $background-paper;
-    border-radius: $border-radius-md;
-    box-shadow: $shadow-md;
-    overflow: hidden;
-    font-size: $font-size-sm;
-  }
-}
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: $spacing-sm;
 
-.menuButton {
-  width: 100%;
-  padding: $spacing-md;
-  text-align: left;
-  background-color: $background-paper;
-  border: none;
-  border-bottom: 1px solid $border-color;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color $transition-fast;
-  font-size: $font-size-base;
+    .menuButton {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      width: 100%;
+      padding: $spacing-md;
+      background-color: $background-paper;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-sm;
+      color: $text-primary;
+      text-decoration: none;
+      transition: all $transition-fast;
+      flex: 1;
 
-  &:hover {
-    background-color: color.adjust($background-light, $lightness: -5%);
-  }
+      &:hover {
+        background-color: color.scale($background-light, $lightness: -5%);
+        border-color: color.scale($border-color, $lightness: -10%);
+      }
 
-  &.active {
-    background-color: color.adjust($background-light, $lightness: -5%);
-  }
-}
-
-.subMenu {
-  padding-left: $spacing-md;
-}
-
-.subMenuButton {
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  text-align: left;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: $font-size-sm;
-  color: $text-primary;
-  transition: background-color $transition-fast;
-
-  &:hover {
-    background-color: $background-light;
-  }
-
-  &.active {
-    background-color: $background-light;
-    font-weight: 500;
-  }
-}
-
-.subSubMenu {
-  padding-left: $spacing-md;
-}
-
-.subSubMenuButton {
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  text-align: left;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: $font-size-sm;
-  color: $text-primary;
-  transition: background-color $transition-fast;
-
-  &:hover {
-    background-color: $background-light;
-  }
-}
-
-.actions {
-  padding: $spacing-sm $spacing-md $spacing-sm $spacing-xl;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-
-.actionLink {
-  text-decoration: none;
-  color: $primary-color;
-  font-size: $font-size-sm;
-  padding: $spacing-sm;
-  border-radius: $border-radius-sm;
-  transition: background-color $transition-fast;
-
-  &:hover {
-    background-color: $background-light;
-    text-decoration: underline;
-  }
-}
-
-.loading,
-.error {
-  padding: $spacing-xl;
-  text-align: center;
-  max-width: 600px;
-  margin: $spacing-xl auto;
-  background-color: $background-paper;
-  border-radius: $border-radius-md;
-  box-shadow: $shadow-md;
-
-  h2 {
-    color: $text-primary;
-    margin-bottom: $spacing-md;
-  }
-
-  p {
-    color: $text-primary;
-    margin-bottom: $spacing-lg;
-  }
-
-  button {
-    padding: $spacing-sm $spacing-md;
-    background-color: $primary-color;
-    color: $white;
-    border: none;
-    border-radius: $border-radius-sm;
-    cursor: pointer;
-    font-size: $font-size-base;
-
-    &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
+      .icon {
+        font-size: $font-size-lg;
+        color: $primary-color;
+      }
     }
   }
 }
 
-.error {
+.constructiveSolutions {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $border-color;
+
   h2 {
-    color: $error-color;
+    color: $primary-color;
+    margin-bottom: $spacing-md;
+    font-size: $font-size-xl;
+  }
+
+  .menuSection {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  .menuButton,
+  .subMenuButton,
+  .subSubMenuButton {
+    @include button-secondary;
+    width: 100%;
+    text-align: left;
+    padding: $spacing-md;
+    font-size: $font-size-md;
+    transition: background-color 0.3s ease;
+
+    &.active {
+      background-color: $primary-color;
+      color: $text-light;
+    }
+  }
+
+  .subMenu,
+  .subSubMenu {
+    margin-left: $spacing-md;
+    margin-top: $spacing-sm;
+  }
+
+  .actions {
+    margin-left: $spacing-md;
+    margin-top: $spacing-sm;
+    display: flex;
+    gap: $spacing-sm;
+
+    .actionLink {
+      @include button-primary;
+      padding: $spacing-sm $spacing-md;
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $text-secondary;
+}
+
+.error {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $error-color;
+
+  h2 {
+    margin-bottom: $spacing-md;
+  }
+
+  button {
+    @include button-primary;
+    margin-top: $spacing-md;
   }
 } 
