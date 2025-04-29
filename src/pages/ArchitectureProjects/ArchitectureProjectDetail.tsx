@@ -124,7 +124,7 @@ const ArchitectureProjectDetail: React.FC = () => {
       </div>
 
       <div className={styles.constructiveSolutions}>
-        <h2>Soluciones Constructivas</h2>
+        <h2>Expediente proyecto</h2>
         <div className={styles.menuSection}>
           <button
             className={classNames(styles.menuButton, {
