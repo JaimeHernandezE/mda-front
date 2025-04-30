@@ -11,7 +11,7 @@ const ProjectDetail: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, updateProject, deleteProject } = useProjectNodes();
-  const { data: architectureProjects, isLoading: isLoadingArchProjects } = useProjectArchitectureProjects(Number(projectId));
+  const { data: architectureProjects } = useProjectArchitectureProjects(Number(projectId));
   const project = projects?.find(p => p.id === Number(projectId));
 
   const [isEditing, setIsEditing] = useState(false);
@@ -64,20 +64,26 @@ const ProjectDetail: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>{project.name}</h1>
+        <h1 className={styles.title}>
+          {isEditing ? 'Editar Proyecto' : 'Detalles del Proyecto'}
+        </h1>
         <div className={styles.actions}>
-          <button 
-            className={styles.editButton}
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            {isEditing ? 'Cancelar' : 'Editar'}
-          </button>
-          <button 
-            className={styles.deleteButton}
-            onClick={handleDelete}
-          >
-            Eliminar
-          </button>
+          {!isEditing && (
+            <>
+              <button 
+                className={styles.editButton}
+                onClick={() => setIsEditing(true)}
+              >
+                Editar
+              </button>
+              <button 
+                className={styles.deleteButton}
+                onClick={handleDelete}
+              >
+                Eliminar
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -102,6 +108,7 @@ const ProjectDetail: React.FC = () => {
               name="description"
               value={formData.description}
               onChange={handleInputChange}
+              rows={4}
               required
             />
           </div>
@@ -143,7 +150,7 @@ const ProjectDetail: React.FC = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label>
+            <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
                 name="is_active"
@@ -155,6 +162,9 @@ const ProjectDetail: React.FC = () => {
           </div>
 
           <div className={styles.formActions}>
+            <button type="button" onClick={() => setIsEditing(false)}>
+              Cancelar
+            </button>
             <button type="submit" className={styles.saveButton}>
               Guardar Cambios
             </button>
@@ -218,7 +228,7 @@ const ProjectDetail: React.FC = () => {
             
             {architectureProjects && architectureProjects.length > 0 ? (
               <div className={styles.architectureList}>
-                {architectureProjects?.map((archProject: ArchitectureProjectNode) => (
+                {(architectureProjects as ArchitectureProjectNode[]).map(archProject => (
                   <div key={archProject.id} className={styles.architectureItem}>
                     <Link to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}>
                       {archProject.architecture_data?.architecture_project_name || archProject.name}
