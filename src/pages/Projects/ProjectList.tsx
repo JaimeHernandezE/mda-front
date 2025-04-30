@@ -98,6 +98,7 @@ const ProjectArchitectureList: React.FC<{ projectId: number }> = ({ projectId })
           <Link 
             to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}
             className={styles.architectureLink}
+            onClick={(e) => e.stopPropagation()}
           >
             {archProject.architecture_data?.architecture_project_name || archProject.name}
           </Link>
