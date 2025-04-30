@@ -1,19 +1,23 @@
+// src/pages/Projects/CreateProject.tsx
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProjects } from '../../hooks/useProjects';
+import { useProjectNodes } from '../../hooks/useProjectNodes';
 import styles from './CreateProject.module.scss';
 
 const CreateProject: React.FC = () => {
   const navigate = useNavigate();
-  const { createProject } = useProjects();
+  const { createProject } = useProjectNodes();
 
   const [formData, setFormData] = useState({
-    project_name: '',
-    project_description: '',
-    is_active: true
+    name: '',
+    description: '',
+    is_active: true,
+    type: 'project' as const,
+    status: 'en_estudio' as const,
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -33,37 +37,48 @@ const CreateProject: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Crear Nuevo Proyecto</h1>
-      </div>
-
+      <h1 className={styles.title}>Crear Nuevo Proyecto</h1>
+      
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
-          <label htmlFor="project_name">Nombre del Proyecto</label>
+          <label htmlFor="name">Nombre del Proyecto</label>
           <input
             type="text"
-            id="project_name"
-            name="project_name"
-            value={formData.project_name}
+            id="name"
+            name="name"
+            value={formData.name}
             onChange={handleInputChange}
             required
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="project_description">Descripción</label>
+          <label htmlFor="description">Descripción</label>
           <textarea
-            id="project_description"
-            name="project_description"
-            value={formData.project_description}
+            id="description"
+            name="description"
+            value={formData.description}
             onChange={handleInputChange}
-            rows={4}
             required
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.checkboxLabel}>
+          <label htmlFor="status">Estado Inicial</label>
+          <select
+            id="status"
+            name="status"
+            value={formData.status}
+            onChange={handleInputChange}
+          >
+            <option value="en_estudio">En Estudio</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>
             <input
               type="checkbox"
               name="is_active"
@@ -75,11 +90,7 @@ const CreateProject: React.FC = () => {
         </div>
 
         <div className={styles.formActions}>
-          <button 
-            type="button" 
-            className={styles.cancelButton}
-            onClick={() => navigate('/proyectos/lista')}
-          >
+          <button type="button" onClick={() => navigate('/proyectos/lista')}>
             Cancelar
           </button>
           <button type="submit" className={styles.saveButton}>

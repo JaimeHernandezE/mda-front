@@ -2,7 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ArchitectureProject, CreateArchitectureProjectDto, UpdateArchitectureProjectDto } from '../types/architecture.types';
+import { ProjectNode, CreateProjectNodeDto, UpdateProjectNodeDto } from '../types/project_nodes.types';
+import { ArchitectureProjectNode } from '../types/architecture.types';
 import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -17,11 +18,11 @@ export const useProjectArchitectureProjects = (projectId?: number) => {
     }
   };
 
-  return useQuery<ArchitectureProject[]>({
+  return useQuery<ArchitectureProjectNode[]>({
     queryKey: ['architectureProjects', projectId],
     queryFn: async () => {
-      const response = await axios.get(`${API_URL}/architecture-projects/?project=${projectId}`, axiosConfig);
-      return response.data;
+      const response = await axios.get(`${API_URL}/project-nodes/?node_parent=${projectId}`, axiosConfig);
+      return response.data.filter((node: ProjectNode) => node.type === 'architecture_subproject') as ArchitectureProjectNode[];
     },
     enabled: !!projectId,
   });
@@ -37,11 +38,11 @@ export const useArchitectureProject = (architectureProjectId?: number) => {
     }
   };
 
-  return useQuery<ArchitectureProject>({
+  return useQuery<ArchitectureProjectNode>({
     queryKey: ['architectureProject', architectureProjectId],
     queryFn: async () => {
-      const response = await axios.get(`${API_URL}/architecture-projects/${architectureProjectId}/`, axiosConfig);
-      return response.data;
+      const response = await axios.get(`${API_URL}/project-nodes/${architectureProjectId}/`, axiosConfig);
+      return response.data as ArchitectureProjectNode;
     },
     enabled: !!architectureProjectId,
   });
@@ -60,19 +61,23 @@ export const useArchitectureProjectMutations = () => {
   };
 
   const createArchitectureProject = useMutation({
-    mutationFn: async (newArchitectureProject: CreateArchitectureProjectDto) => {
-      const response = await axios.post(`${API_URL}/architecture-projects/`, newArchitectureProject, axiosConfig);
-      return response.data;
+    mutationFn: async (newArchitectureProject: CreateProjectNodeDto & { parent: number }) => {
+      const projectData = {
+        ...newArchitectureProject,
+        type: 'architecture_subproject'
+      };
+      const response = await axios.post(`${API_URL}/project-nodes/`, projectData, axiosConfig);
+      return response.data as ArchitectureProjectNode;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['architectureProjects', variables.project] });
+      queryClient.invalidateQueries({ queryKey: ['architectureProjects', variables.parent] });
     },
   });
 
   const updateArchitectureProject = useMutation({
-    mutationFn: async ({ architectureProjectId, data }: { architectureProjectId: number; data: UpdateArchitectureProjectDto }) => {
-      const response = await axios.put(`${API_URL}/architecture-projects/${architectureProjectId}/`, data, axiosConfig);
-      return response.data;
+    mutationFn: async ({ architectureProjectId, data }: { architectureProjectId: number; data: UpdateProjectNodeDto }) => {
+      const response = await axios.put(`${API_URL}/project-nodes/${architectureProjectId}/`, data, axiosConfig);
+      return response.data as ArchitectureProjectNode;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['architectureProject', variables.architectureProjectId] });
@@ -82,7 +87,7 @@ export const useArchitectureProjectMutations = () => {
 
   const deleteArchitectureProject = useMutation({
     mutationFn: async (architectureProjectId: number) => {
-      await axios.delete(`${API_URL}/architecture-projects/${architectureProjectId}/`, axiosConfig);
+      await axios.delete(`${API_URL}/project-nodes/${architectureProjectId}/`, axiosConfig);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['architectureProjects'] });

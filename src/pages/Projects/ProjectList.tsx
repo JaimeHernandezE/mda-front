@@ -1,12 +1,15 @@
+// src/pages/Projects/ProjectList.tsx
+
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useProjects } from '../../hooks/useProjects';
+import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { useProjectArchitectureProjects } from '../../hooks/useArchitectureProjects';
+import { ArchitectureProjectNode } from '../../types/architecture.types';
 import styles from './ProjectList.module.scss';
 
 const ProjectList: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, isLoadingProjects } = useProjects();
+  const { projects, isLoadingProjects } = useProjectNodes();
 
   const handleCreateProject = () => {
     navigate('/proyectos/crear');
@@ -31,19 +34,31 @@ const ProjectList: React.FC = () => {
           Crear Proyecto
         </button>
       </div>
+      
       <div className={styles.grid}>
-        {projects?.map((project) => (
+        {projects?.filter(project => project.type === 'project').map((project) => (
           <div key={project.id} className={styles.card}>
-            <h2 className={styles.cardTitle}>{project.project_name}</h2>
-            <p className={styles.cardDescription}>{project.project_description}</p>
+            <h2 className={styles.cardTitle}>{project.name}</h2>
+            <p className={styles.cardDescription}>{project.description}</p>
             
+            <div className={styles.projectInfo}>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Estado:</span>
+                <span className={styles.infoValue}>{project.status}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Progreso:</span>
+                <span className={styles.infoValue}>{project.progress_percent}%</span>
+              </div>
+            </div>
+
             <div className={styles.architectureProjects}>
               <h3 className={styles.architectureTitle}>Proyectos de Arquitectura</h3>
               <ProjectArchitectureList projectId={project.id} />
             </div>
 
             <div className={styles.cardFooter}>
-              <span className={styles.status}>
+              <span className={styles.status} data-active={project.is_active}>
                 {project.is_active ? 'Activo' : 'Inactivo'}
               </span>
               <button 
@@ -74,13 +89,13 @@ const ProjectArchitectureList: React.FC<{ projectId: number }> = ({ projectId })
 
   return (
     <ul className={styles.architectureList}>
-      {architectureProjects.map((archProject) => (
+      {architectureProjects.map((archProject: ArchitectureProjectNode) => (
         <li key={archProject.id} className={styles.architectureItem}>
           <Link 
             to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}
             className={styles.architectureLink}
           >
-            {archProject.architecture_project_name}
+            {archProject.architecture_data?.architecture_project_name || archProject.name}
           </Link>
           <span className={styles.architectureStatus}>
             {archProject.is_active ? 'Activo' : 'Inactivo'}

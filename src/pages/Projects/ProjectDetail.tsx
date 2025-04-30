@@ -1,21 +1,27 @@
+// src/pages/Projects/ProjectDetail.tsx
+
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useProjects } from '../../hooks/useProjects';
+import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { useProjectArchitectureProjects } from '../../hooks/useArchitectureProjects';
+import { ArchitectureProjectNode } from '../../types/architecture.types';
 import styles from './ProjectDetail.module.scss';
 
 const ProjectDetail: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { projects, updateProject, deleteProject } = useProjects();
+  const { projects, updateProject, deleteProject } = useProjectNodes();
   const { data: architectureProjects, isLoading: isLoadingArchProjects } = useProjectArchitectureProjects(Number(projectId));
   const project = projects?.find(p => p.id === Number(projectId));
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    project_name: project?.project_name || '',
-    project_description: project?.project_description || '',
-    is_active: project?.is_active || true
+    name: project?.name || '',
+    description: project?.description || '',
+    is_active: project?.is_active || true,
+    status: project?.status || 'en_estudio',
+    start_date: project?.start_date || '',
+    end_date: project?.end_date || ''
   });
 
   const handleCreateArchitectureProject = () => {
@@ -26,7 +32,7 @@ const ProjectDetail: React.FC = () => {
     return <div className={styles.container}>Proyecto no encontrado</div>;
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -58,57 +64,86 @@ const ProjectDetail: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>
-          {isEditing ? 'Editar Proyecto' : 'Detalles del Proyecto'}
-        </h1>
+        <h1 className={styles.title}>{project.name}</h1>
         <div className={styles.actions}>
-          {!isEditing && (
-            <>
-              <button 
-                className={styles.editButton}
-                onClick={() => setIsEditing(true)}
-              >
-                Editar
-              </button>
-              <button 
-                className={styles.deleteButton}
-                onClick={handleDelete}
-              >
-                Eliminar
-              </button>
-            </>
-          )}
+          <button 
+            className={styles.editButton}
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            {isEditing ? 'Cancelar' : 'Editar'}
+          </button>
+          <button 
+            className={styles.deleteButton}
+            onClick={handleDelete}
+          >
+            Eliminar
+          </button>
         </div>
       </div>
 
       {isEditing ? (
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
-            <label htmlFor="project_name">Nombre del Proyecto</label>
+            <label htmlFor="name">Nombre del Proyecto</label>
             <input
               type="text"
-              id="project_name"
-              name="project_name"
-              value={formData.project_name}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleInputChange}
               required
             />
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="project_description">Descripción</label>
+            <label htmlFor="description">Descripción</label>
             <textarea
-              id="project_description"
-              name="project_description"
-              value={formData.project_description}
+              id="description"
+              name="description"
+              value={formData.description}
               onChange={handleInputChange}
-              rows={4}
               required
             />
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.checkboxLabel}>
+            <label htmlFor="status">Estado</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+            >
+              <option value="en_estudio">En Estudio</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="finalizado">Finalizado</option>
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="start_date">Fecha de Inicio</label>
+            <input
+              type="date"
+              id="start_date"
+              name="start_date"
+              value={formData.start_date || ''}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="end_date">Fecha de Fin</label>
+            <input
+              type="date"
+              id="end_date"
+              name="end_date"
+              value={formData.end_date || ''}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>
               <input
                 type="checkbox"
                 name="is_active"
@@ -120,9 +155,6 @@ const ProjectDetail: React.FC = () => {
           </div>
 
           <div className={styles.formActions}>
-            <button type="button" onClick={() => setIsEditing(false)}>
-              Cancelar
-            </button>
             <button type="submit" className={styles.saveButton}>
               Guardar Cambios
             </button>
@@ -132,16 +164,36 @@ const ProjectDetail: React.FC = () => {
         <div className={styles.details}>
           <div className={styles.detailItem}>
             <h3>Nombre del Proyecto</h3>
-            <p>{project.project_name}</p>
+            <p>{project.name}</p>
           </div>
 
           <div className={styles.detailItem}>
             <h3>Descripción</h3>
-            <p>{project.project_description}</p>
+            <p>{project.description}</p>
           </div>
 
           <div className={styles.detailItem}>
             <h3>Estado</h3>
+            <p>{project.status}</p>
+          </div>
+
+          <div className={styles.detailItem}>
+            <h3>Progreso</h3>
+            <p>{project.progress_percent}%</p>
+          </div>
+
+          <div className={styles.detailItem}>
+            <h3>Fecha de Inicio</h3>
+            <p>{project.start_date ? new Date(project.start_date).toLocaleDateString() : 'No definida'}</p>
+          </div>
+
+          <div className={styles.detailItem}>
+            <h3>Fecha de Fin</h3>
+            <p>{project.end_date ? new Date(project.end_date).toLocaleDateString() : 'No definida'}</p>
+          </div>
+
+          <div className={styles.detailItem}>
+            <h3>Estado del Proyecto</h3>
             <p>{project.is_active ? 'Activo' : 'Inactivo'}</p>
           </div>
 
@@ -166,12 +218,12 @@ const ProjectDetail: React.FC = () => {
             
             {architectureProjects && architectureProjects.length > 0 ? (
               <div className={styles.architectureList}>
-                {architectureProjects?.map(archProject => (
+                {architectureProjects?.map((archProject: ArchitectureProjectNode) => (
                   <div key={archProject.id} className={styles.architectureItem}>
                     <Link to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}>
-                      {archProject.architecture_project_name}
+                      {archProject.architecture_data?.architecture_project_name || archProject.name}
                     </Link>
-                    <span className={styles.status}>
+                    <span className={styles.status} data-active={archProject.is_active}>
                       {archProject.is_active ? 'Activo' : 'Inactivo'}
                     </span>
                   </div>

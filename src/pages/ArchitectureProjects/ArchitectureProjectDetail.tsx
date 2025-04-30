@@ -1,43 +1,21 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useArchitectureProject } from '../../hooks/useArchitectureProjects';
+import { ArchitectureProjectNode } from '../../types/architecture.types';
 import styles from './ArchitectureProjectDetail.module.scss';
-import classNames from 'classnames';
 import { 
   Home as HomeIcon,
   AttachMoney as BudgetIcon,
   People as PeopleIcon
 } from '@mui/icons-material';
-
-type MenuId = 'constructiveSolutions';
-type SubMenuId = 'fireSolutions';
-type SubSubMenuId = 'additiveMethod';
+import { Link } from 'react-router-dom';
 
 const ArchitectureProjectDetail: React.FC = () => {
   const { projectId, architectureId } = useParams<{ projectId: string; architectureId: string }>();
   const navigate = useNavigate();
-  const [activeMenu, setActiveMenu] = useState<MenuId | null>(null);
-  const [activeSubMenu, setActiveSubMenu] = useState<SubMenuId | null>(null);
-  const [activeSubSubMenu, setActiveSubSubMenu] = useState<SubSubMenuId | null>(null);
-
   const { data: project, isLoading, isError, error } = useArchitectureProject(
     architectureId ? Number(architectureId) : undefined
   );
-
-  const handleMenuClick = (menuId: MenuId) => {
-    setActiveMenu(activeMenu === menuId ? null : menuId);
-    setActiveSubMenu(null);
-    setActiveSubSubMenu(null);
-  };
-
-  const handleSubMenuClick = (subMenuId: SubMenuId) => {
-    setActiveSubMenu(activeSubMenu === subMenuId ? null : subMenuId);
-    setActiveSubSubMenu(null);
-  };
-
-  const handleSubSubMenuClick = (subSubMenuId: SubSubMenuId) => {
-    setActiveSubSubMenu(activeSubSubMenu === subSubMenuId ? null : subSubMenuId);
-  };
 
   if (!architectureId || isNaN(Number(architectureId))) {
     return (
@@ -63,122 +41,66 @@ const ArchitectureProjectDetail: React.FC = () => {
     );
   }
 
+  const architectureProject = project as ArchitectureProjectNode;
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1>{project.architecture_project_name}</h1>
+          <h1>{architectureProject.architecture_data?.architecture_project_name || architectureProject.name}</h1>
           <div className={styles.status}>
-            Estado: {project.is_active ? 'Activo' : 'Inactivo'}
+            Estado: {architectureProject.is_active ? 'Activo' : 'Inactivo'}
           </div>
         </div>
-        <button 
-          className={styles.backButton}
-          onClick={() => navigate(`/proyectos/${projectId}`)}
-        >
-          Volver al Proyecto
-        </button>
+        <div className={styles.actions}>
+          <button onClick={() => navigate(`/proyectos/${projectId}`)}>
+            Volver al Proyecto
+          </button>
+        </div>
       </header>
 
-      <div className={styles.content}>
-        <main className={styles.mainInfo}>
-          <section className={styles.infoSection}>
-            <h2>Detalles del Proyecto</h2>
+      <main className={styles.content}>
+        <section className={styles.details}>
+          <h2>Detalles del Proyecto</h2>
+          <p>
+            <strong>Descripción:</strong> {architectureProject.architecture_data?.architecture_project_description || architectureProject.description}
+          </p>
+          <p>
+            <strong>Fecha de inicio:</strong> {architectureProject.start_date ? new Date(architectureProject.start_date).toLocaleDateString() : 'No definida'}
+          </p>
+          {architectureProject.architecture_data?.permit_subtype_name && (
             <p>
-              <strong>Descripción:</strong> {project.architecture_project_description}
+              <strong>Subtipo de permiso:</strong> {architectureProject.architecture_data.permit_subtype_name}
             </p>
-            <p>
-              <strong>Fecha de inicio:</strong> {project.start_date ? new Date(project.start_date).toLocaleDateString() : 'No definida'}
-            </p>
-            <p>
-              <strong>Subtipo de permiso:</strong> {project.permit_subtype_name}
-            </p>
-          </section>
-        </main>
-
-        <aside className={styles.sideMenu}>
-          <div className={styles.menuSection}>
-            <Link 
-              to={`/proyectos/${projectId}/arquitectura/${architectureId}/propiedad`}
-              className={styles.menuButton}
-            >
-              <HomeIcon className={styles.icon} />
-              Propiedad
-            </Link>
-            <Link 
-              to={`/proyectos/${projectId}/arquitectura/${architectureId}/presupuestos`}
-              className={styles.menuButton}
-            >
-              <BudgetIcon className={styles.icon} />
-              Presupuestos
-            </Link>
-            <Link 
-              to={`/proyectos/${projectId}/arquitectura/${architectureId}/profesionales`}
-              className={styles.menuButton}
-            >
-              <PeopleIcon className={styles.icon} />
-              Propietario / Profesionales
-            </Link>
-          </div>
-        </aside>
-      </div>
-
-      <div className={styles.constructiveSolutions}>
-        <h2>Expediente proyecto</h2>
-        <div className={styles.menuSection}>
-          <button
-            className={classNames(styles.menuButton, {
-              [styles.active]: activeMenu === 'constructiveSolutions'
-            })}
-            onClick={() => handleMenuClick('constructiveSolutions')}
-          >
-            Soluciones constructivas
-          </button>
-
-          {activeMenu === 'constructiveSolutions' && (
-            <div className={styles.subMenu}>
-              <button
-                className={classNames(styles.subMenuButton, {
-                  [styles.active]: activeSubMenu === 'fireSolutions'
-                })}
-                onClick={() => handleSubMenuClick('fireSolutions')}
-              >
-                Soluciones contra el fuego
-              </button>
-
-              {activeSubMenu === 'fireSolutions' && (
-                <div className={styles.subSubMenu}>
-                  <button
-                    className={classNames(styles.subSubMenuButton, {
-                      [styles.active]: activeSubSubMenu === 'additiveMethod'
-                    })}
-                    onClick={() => handleSubSubMenuClick('additiveMethod')}
-                  >
-                    Método aditivo de componentes
-                  </button>
-
-                  {activeSubSubMenu === 'additiveMethod' && (
-                    <div className={styles.actions}>
-                      <Link 
-                        to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/crear`}
-                        className={styles.actionLink}
-                      >
-                        Crear Solución
-                      </Link>
-                      <Link 
-                        to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/lista`}
-                        className={styles.actionLink}
-                      >
-                        Listar Soluciones
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
           )}
+        </section>
+      </main>
+
+      <aside className={styles.sideMenu}>
+        <div className={styles.menuSection}>
+          <Link 
+            to={`/proyectos/${projectId}/arquitectura/${architectureId}/propiedad`}
+            className={styles.menuButton}
+          >
+            <HomeIcon className={styles.icon} />
+            Propiedad
+          </Link>
+          <Link 
+            to={`/proyectos/${projectId}/arquitectura/${architectureId}/presupuestos`}
+            className={styles.menuButton}
+          >
+            <BudgetIcon className={styles.icon} />
+            Presupuestos
+          </Link>
+          <Link 
+            to={`/proyectos/${projectId}/arquitectura/${architectureId}/profesionales`}
+            className={styles.menuButton}
+          >
+            <PeopleIcon className={styles.icon} />
+            Propietario / Profesionales
+          </Link>
         </div>
-      </div>
+      </aside>
     </div>
   );
 };

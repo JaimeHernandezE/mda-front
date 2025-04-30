@@ -4,60 +4,52 @@
 .container {
   max-width: $container-width;
   margin: 0 auto;
-  padding: $spacing-xl;
+  padding: $spacing-lg;
+}
+
+.title {
+  font-size: $font-size-xl;
+  color: $text-primary;
+  margin-bottom: $spacing-lg;
 }
 
 .form {
   background-color: $background-paper;
-  padding: $spacing-xl;
+  padding: $spacing-lg;
   border-radius: $border-radius-md;
   box-shadow: $shadow-md;
 }
 
 .formGroup {
-  margin-bottom: $spacing-lg;
+  margin-bottom: $spacing-md;
 
   label {
     display: block;
-    margin-bottom: $spacing-sm;
-    font-weight: 500;
+    margin-bottom: $spacing-xs;
     color: $text-primary;
+    font-weight: 500;
+
+    input[type="checkbox"] {
+      margin-right: $spacing-xs;
+    }
   }
 
   input[type="text"],
   input[type="date"],
   textarea,
-  .select {
+  select {
     width: 100%;
     padding: $spacing-sm;
     border: 1px solid $border-color;
     border-radius: $border-radius-sm;
+    background-color: $background-light;
+    color: $text-primary;
     font-size: $font-size-base;
-    background-color: $white;
 
     &:focus {
       outline: none;
       border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
-    }
-  }
-
-  .select {
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right $spacing-sm center;
-    background-size: 1em;
-    padding-right: 2.5rem;
-
-    optgroup {
-      font-weight: 600;
-      color: $text-secondary;
-    }
-
-    option {
-      color: $text-primary;
-      padding: $spacing-sm;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
     }
   }
 
@@ -67,47 +59,40 @@
   }
 }
 
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  cursor: pointer;
-
-  input[type="checkbox"] {
-    width: 1.2rem;
-    height: 1.2rem;
-  }
-}
-
 .formActions {
   display: flex;
   justify-content: flex-end;
   gap: $spacing-md;
-  margin-top: $spacing-xl;
+  margin-top: $spacing-lg;
 
   button {
     padding: $spacing-sm $spacing-lg;
     border-radius: $border-radius-sm;
-    font-size: $font-size-base;
+    font-weight: 500;
     cursor: pointer;
     transition: all $transition-fast;
 
-    &:first-child {
-      background-color: $background-light;
-      border: 1px solid $border-color;
-      color: $text-primary;
-
-      &:hover {
-        background-color: color.adjust($background-light, $lightness: -5%);
-      }
+    &:hover {
+      transform: translateY(-1px);
     }
   }
 }
 
-.submitButton {
+.cancelButton {
+  background-color: transparent;
+  border: 1px solid $border-color;
+  color: $text-secondary;
+
+  &:hover {
+    background-color: $background-light;
+    border-color: $text-secondary;
+  }
+}
+
+.saveButton {
   background-color: $primary-color;
-  color: $white;
   border: none;
+  color: $white;
 
   &:hover {
     background-color: color.adjust($primary-color, $lightness: -10%);

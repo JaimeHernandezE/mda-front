@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ProjectCollaborator, CreateProjectCollaboratorDto, UpdateProjectCollaboratorDto } from '../types/project.types';
+import { ProjectCollaborator, CreateProjectCollaboratorDto, UpdateProjectCollaboratorDto } from '../types/project_collaborators.types';
 import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
