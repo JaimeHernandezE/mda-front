@@ -225,4 +225,32 @@
   text-align: center;
   color: $text-secondary;
   font-style: italic;
+}
+
+.coverImageContainer {
+  margin-top: $spacing-sm;
+  max-width: 300px;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.coverImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.previewContainer {
+  margin-top: $spacing-sm;
+  max-width: 200px;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.previewImage {
+  width: 100%;
+  height: auto;
+  display: block;
 } 

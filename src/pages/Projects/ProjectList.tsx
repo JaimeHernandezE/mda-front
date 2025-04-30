@@ -26,47 +26,51 @@ const ProjectList: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Proyectos</h1>
+        <h1>Proyectos</h1>
         <button 
           className={styles.createButton}
           onClick={handleCreateProject}
         >
-          Crear Proyecto
+          Crear Nuevo Proyecto
         </button>
       </div>
-      
-      <div className={styles.grid}>
-        {projects?.filter(project => project.type === 'project').map((project) => (
-          <div key={project.id} className={styles.card}>
-            <h2 className={styles.cardTitle}>{project.name}</h2>
-            <p className={styles.cardDescription}>{project.description}</p>
-            
-            <div className={styles.projectInfo}>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Estado:</span>
-                <span className={styles.infoValue}>{project.status}</span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Progreso:</span>
-                <span className={styles.infoValue}>{project.progress_percent}%</span>
-              </div>
-            </div>
 
-            <div className={styles.architectureProjects}>
-              <h3 className={styles.architectureTitle}>Proyectos de Arquitectura</h3>
-              <ProjectArchitectureList projectId={project.id} />
-            </div>
-
-            <div className={styles.cardFooter}>
-              <span className={styles.status} data-active={project.is_active}>
-                {project.is_active ? 'Activo' : 'Inactivo'}
-              </span>
-              <button 
-                className={styles.viewButton}
-                onClick={() => handleViewProject(project.id)}
-              >
-                Ver detalles
-              </button>
+      <div className={styles.projectGrid}>
+        {projects?.map((project) => (
+          <div key={project.id} className={styles.projectCard}>
+            <div 
+              className={styles.projectCardContent}
+              onClick={() => handleViewProject(project.id)}
+            >
+              {project.cover_image ? (
+                <div className={styles.coverImageContainer}>
+                  <img 
+                    src={project.cover_image} 
+                    alt={`Portada de ${project.name}`}
+                    className={styles.coverImage}
+                  />
+                </div>
+              ) : (
+                <div className={styles.placeholderImage}>
+                  <span>Sin imagen</span>
+                </div>
+              )}
+              
+              <div className={styles.projectInfo}>
+                <h3>{project.name}</h3>
+                <ProjectArchitectureList projectId={project.id} />
+                <p className={styles.description}>
+                  {project.description || 'Sin descripción'}
+                </p>
+                <div className={styles.projectMeta}>
+                  <span className={styles.status} data-status={project.status}>
+                    {project.status}
+                  </span>
+                  <span className={styles.progress}>
+                    {project.progress_percent}% completado
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         ))}

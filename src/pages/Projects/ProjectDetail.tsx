@@ -21,8 +21,11 @@ const ProjectDetail: React.FC = () => {
     is_active: project?.is_active || true,
     status: project?.status || 'en_estudio',
     start_date: project?.start_date || '',
-    end_date: project?.end_date || ''
+    end_date: project?.end_date || '',
+    cover_image: null as File | null
   });
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(project?.cover_image || null);
 
   const handleCreateArchitectureProject = () => {
     navigate(`/proyectos/${projectId}/arquitectura/crear`);
@@ -40,10 +43,38 @@ const ProjectDetail: React.FC = () => {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData(prev => ({ ...prev, cover_image: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateProject.mutateAsync({ id: project.id, data: formData });
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null) {
+          if (typeof value === 'boolean') {
+            formDataToSend.append(key, value.toString());
+          } else if (value instanceof File) {
+            formDataToSend.append(key, value);
+          } else {
+            formDataToSend.append(key, value as string);
+          }
+        }
+      });
+      
+      await updateProject.mutateAsync({ 
+        id: project.id, 
+        data: formDataToSend 
+      });
       setIsEditing(false);
     } catch (error) {
       console.error('Error al actualizar el proyecto:', error);
@@ -161,6 +192,26 @@ const ProjectDetail: React.FC = () => {
             </label>
           </div>
 
+          <div className={styles.formGroup}>
+            <label htmlFor="cover_image">Imagen de Portada</label>
+            <input
+              type="file"
+              id="cover_image"
+              name="cover_image"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {previewUrl && (
+              <div className={styles.previewContainer}>
+                <img 
+                  src={previewUrl} 
+                  alt="Preview" 
+                  className={styles.previewImage}
+                />
+              </div>
+            )}
+          </div>
+
           <div className={styles.formActions}>
             <button type="button" onClick={() => setIsEditing(false)}>
               Cancelar
@@ -215,6 +266,21 @@ const ProjectDetail: React.FC = () => {
           <div className={styles.detailItem}>
             <h3>Última Modificación</h3>
             <p>{new Date(project.updated_at).toLocaleDateString()}</p>
+          </div>
+
+          <div className={styles.detailItem}>
+            <h3>Imagen de Portada</h3>
+            {project.cover_image ? (
+              <div className={styles.coverImageContainer}>
+                <img 
+                  src={project.cover_image} 
+                  alt="Portada del proyecto" 
+                  className={styles.coverImage}
+                />
+              </div>
+            ) : (
+              <p>No hay imagen de portada</p>
+            )}
           </div>
 
           <div className={styles.architectureSection}>

@@ -29,7 +29,26 @@ export const useProjectNodes = () => {
 
   const createProject = useMutation({
     mutationFn: async (data: CreateProjectNodeDto) => {
-      const response = await axios.post(`${API_URL}/project-nodes/`, data, axiosConfig);
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          if (value instanceof File) {
+            formData.append(key, value);
+          } else if (typeof value === 'boolean') {
+            formData.append(key, value.toString());
+          } else {
+            formData.append(key, value);
+          }
+        }
+      });
+
+      const response = await axios.post(`${API_URL}/project-nodes/`, formData, {
+        ...axiosConfig,
+        headers: {
+          ...axiosConfig.headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     },
     onSuccess: () => {
@@ -38,8 +57,17 @@ export const useProjectNodes = () => {
   });
 
   const updateProject = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: UpdateProjectNodeDto }) => {
-      const response = await axios.put(`${API_URL}/project-nodes/${id}/`, data, axiosConfig);
+    mutationFn: async ({ id, data }: { id: number; data: FormData | UpdateProjectNodeDto }) => {
+      const isFormData = data instanceof FormData;
+      const config = {
+        ...axiosConfig,
+        headers: {
+          ...axiosConfig.headers,
+          'Content-Type': isFormData ? 'multipart/form-data' : 'application/json',
+        },
+      };
+
+      const response = await axios.put(`${API_URL}/project-nodes/${id}/`, data, config);
       return response.data;
     },
     onSuccess: (_, variables) => {
