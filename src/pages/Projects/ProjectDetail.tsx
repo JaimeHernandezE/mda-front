@@ -209,12 +209,12 @@ const ProjectDetail: React.FC = () => {
 
           <div className={styles.detailItem}>
             <h3>Fecha de Creación</h3>
-            <p>{new Date(project.created).toLocaleDateString()}</p>
+            <p>{new Date(project.created_at).toLocaleDateString()}</p>
           </div>
 
           <div className={styles.detailItem}>
             <h3>Última Modificación</h3>
-            <p>{new Date(project.modified).toLocaleDateString()}</p>
+            <p>{new Date(project.updated_at).toLocaleDateString()}</p>
           </div>
 
           <div className={styles.architectureSection}>
@@ -228,7 +228,7 @@ const ProjectDetail: React.FC = () => {
             
             {architectureProjects && architectureProjects.length > 0 ? (
               <div className={styles.architectureList}>
-                {(architectureProjects as ArchitectureProjectNode[]).map(archProject => (
+                {(architectureProjects as ArchitectureProjectNode[]).map((archProject) => (
                   <div key={archProject.id} className={styles.architectureItem}>
                     <Link to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}>
                       {archProject.architecture_data?.architecture_project_name || archProject.name}
