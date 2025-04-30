@@ -7,7 +7,11 @@ import { ProjectNode, CreateProjectNodeDto, UpdateProjectNodeDto } from '../type
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export const useProjectNodes = () => {
+interface ProjectNodesFilters {
+  node_parent?: number;
+}
+
+export const useProjectNodes = (filters?: ProjectNodesFilters) => {
   const { accessToken } = useAuth();
   const queryClient = useQueryClient();
 
@@ -19,13 +23,33 @@ export const useProjectNodes = () => {
   };
 
   const getProjects = useQuery<ProjectNode[]>({
-    queryKey: ['projectNodes'],
+    queryKey: ['projectNodes', filters],
     queryFn: async () => {
-      const response = await axios.get(`${API_URL}/project-nodes/`, axiosConfig);
+      const params = new URLSearchParams();
+      if (filters?.node_parent) {
+        params.append('node_parent', filters.node_parent.toString());
+      }
+      const response = await axios.get(`${API_URL}/project-nodes/?${params.toString()}`, axiosConfig);
       return response.data;
     },
     enabled: !!accessToken,
   });
+
+  const getProjectsByArchitecture = async (architectureId: number) => {
+    const response = await axios.get(
+      `${API_URL}/project-nodes/by_architecture_project/${architectureId}/`,
+      axiosConfig
+    );
+    return response.data;
+  };
+
+  const useArchitectureNodes = (architectureId?: number) => {
+    return useQuery<ProjectNode[]>({
+      queryKey: ['architectureNodes', architectureId],
+      queryFn: () => getProjectsByArchitecture(architectureId!),
+      enabled: !!accessToken && !!architectureId,
+    });
+  };
 
   const createProject = useMutation({
     mutationFn: async (data: CreateProjectNodeDto) => {
@@ -53,6 +77,7 @@ export const useProjectNodes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectNodes'] });
+      queryClient.invalidateQueries({ queryKey: ['architectureNodes'] });
     },
   });
 
@@ -72,6 +97,7 @@ export const useProjectNodes = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['projectNodes'] });
+      queryClient.invalidateQueries({ queryKey: ['architectureNodes'] });
       queryClient.invalidateQueries({ queryKey: ['projectNode', variables.id] });
     },
   });
@@ -82,12 +108,14 @@ export const useProjectNodes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectNodes'] });
+      queryClient.invalidateQueries({ queryKey: ['architectureNodes'] });
     },
   });
 
   return {
     projects: getProjects.data,
     isLoadingProjects: getProjects.isLoading,
+    useArchitectureNodes,
     createProject,
     updateProject,
     deleteProject,

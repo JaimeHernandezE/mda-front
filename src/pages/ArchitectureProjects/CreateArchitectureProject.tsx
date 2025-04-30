@@ -16,7 +16,6 @@ const CreateArchitectureProject: React.FC = () => {
     type: 'architecture_subproject' as NodeType,
     status: 'en_estudio' as const,
     start_date: '',
-    end_date: '',
     parent: 0
   });
 
@@ -93,17 +92,6 @@ const CreateArchitectureProject: React.FC = () => {
             id="start_date"
             name="start_date"
             value={formData.start_date}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="end_date">Fecha de Fin</label>
-          <input
-            type="date"
-            id="end_date"
-            name="end_date"
-            value={formData.end_date}
             onChange={handleInputChange}
           />
         </div>

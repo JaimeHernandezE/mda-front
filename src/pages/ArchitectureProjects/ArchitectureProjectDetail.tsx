@@ -1,42 +1,100 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useArchitectureProject } from '../../hooks/useArchitectureProjects';
+import { useArchitectureProjectNodes } from '../../hooks/useArchitectureProjectNodes';
 import styles from './ArchitectureProjectDetail.module.scss';
-import classNames from 'classnames';
 import { 
   Home as HomeIcon,
   AttachMoney as BudgetIcon,
-  People as PeopleIcon
+  People as PeopleIcon,
+  Description as DocumentIcon,
+  Assignment as FormIcon,
+  VerifiedUser as CertificateIcon,
+  Build as ConstructionIcon,
+  Link as LinkIcon,
+  Add as AddIcon,
+  List as ListIcon
 } from '@mui/icons-material';
 
-type MenuId = 'constructiveSolutions';
-type SubMenuId = 'fireSolutions';
-type SubSubMenuId = 'additiveMethod';
+type NodeType = 'document' | 'form' | 'certificate' | 'construction_solution' | 'external_link' | 'list';
+
+interface AntecedentOption {
+  id: NodeType;
+  label: string;
+  icon: React.ReactElement;
+  description: string;
+}
+
+const antecedentOptions: AntecedentOption[] = [
+  {
+    id: 'document',
+    label: 'Documento',
+    icon: <DocumentIcon />,
+    description: 'Agregar un documento al proyecto'
+  },
+  {
+    id: 'form',
+    label: 'Formulario',
+    icon: <FormIcon />,
+    description: 'Agregar un formulario al proyecto'
+  },
+  {
+    id: 'certificate',
+    label: 'Certificado',
+    icon: <CertificateIcon />,
+    description: 'Agregar un certificado al proyecto'
+  },
+  {
+    id: 'construction_solution',
+    label: 'Solución Constructiva',
+    icon: <ConstructionIcon />,
+    description: 'Agregar una solución constructiva'
+  },
+  {
+    id: 'external_link',
+    label: 'Enlace Externo',
+    icon: <LinkIcon />,
+    description: 'Agregar un enlace externo'
+  },
+  {
+    id: 'list',
+    label: 'Listado',
+    icon: <ListIcon />,
+    description: 'Agregar un listado al proyecto'
+  }
+];
 
 const ArchitectureProjectDetail: React.FC = () => {
   const { projectId, architectureId } = useParams<{ projectId: string; architectureId: string }>();
   const navigate = useNavigate();
-  const [activeMenu, setActiveMenu] = useState<MenuId | null>(null);
-  const [activeSubMenu, setActiveSubMenu] = useState<SubMenuId | null>(null);
-  const [activeSubSubMenu, setActiveSubSubMenu] = useState<SubSubMenuId | null>(null);
-
-  const { data: project, isLoading, isError, error } = useArchitectureProject(
+  const [showCreateOptions, setShowCreateOptions] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { data: project, isLoading: isLoadingProject, isError, error: projectError } = useArchitectureProject(
     architectureId ? Number(architectureId) : undefined
   );
 
-  const handleMenuClick = (menuId: MenuId) => {
-    setActiveMenu(activeMenu === menuId ? null : menuId);
-    setActiveSubMenu(null);
-    setActiveSubSubMenu(null);
-  };
+  const { nodes, isLoadingNodes, addNode } = useArchitectureProjectNodes(
+    architectureId ? Number(architectureId) : undefined
+  );
 
-  const handleSubMenuClick = (subMenuId: SubMenuId) => {
-    setActiveSubMenu(activeSubMenu === subMenuId ? null : subMenuId);
-    setActiveSubSubMenu(null);
-  };
-
-  const handleSubSubMenuClick = (subSubMenuId: SubSubMenuId) => {
-    setActiveSubSubMenu(activeSubSubMenu === subSubMenuId ? null : subSubMenuId);
+  const handleCreateNode = async (type: NodeType) => {
+    if (!architectureId) return;
+    
+    try {
+      setError(null);
+      await addNode.mutateAsync({
+        type,
+        name: `Nuevo ${type}`,
+        description: '',
+        is_active: true,
+        file_type_id: 1 // Ajusta este valor según tus necesidades
+      });
+      setShowCreateOptions(false);
+    } catch (err: any) {
+      console.error('Error al crear el nodo:', err);
+      setError(err.response?.data?.detail || 'Error al crear el antecedente');
+    }
   };
 
   if (!architectureId || isNaN(Number(architectureId))) {
@@ -49,7 +107,7 @@ const ArchitectureProjectDetail: React.FC = () => {
     );
   }
 
-  if (isLoading) {
+  if (isLoadingProject || isLoadingNodes) {
     return <div className={styles.loading}>Cargando proyecto...</div>;
   }
 
@@ -57,7 +115,7 @@ const ArchitectureProjectDetail: React.FC = () => {
     return (
       <div className={styles.error}>
         <h2>Error al cargar el proyecto</h2>
-        <p>{error instanceof Error ? error.message : 'Error desconocido'}</p>
+        <p>{projectError instanceof Error ? projectError.message : 'Error desconocido'}</p>
         <button onClick={() => navigate(-1)}>Volver</button>
       </div>
     );
@@ -125,64 +183,70 @@ const ArchitectureProjectDetail: React.FC = () => {
         </aside>
       </div>
 
-      <div className={styles.constructiveSolutions}>
-        <h2>Soluciones Constructivas</h2>
-        <div className={styles.menuSection}>
-          <button
-            className={classNames(styles.menuButton, {
-              [styles.active]: activeMenu === 'constructiveSolutions'
-            })}
-            onClick={() => handleMenuClick('constructiveSolutions')}
+      <section className={styles.antecedentesSection}>
+        <h2>Listado de antecedentes</h2>
+        {error && (
+          <div className={styles.error}>
+            {error}
+          </div>
+        )}
+        <div className={styles.tableContainer}>
+          <table className={styles.antecedentesTable}>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Fecha inicio</th>
+                <th>Fecha fin</th>
+                <th>Estado</th>
+                <th>Progreso</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nodes?.map((node) => (
+                <tr key={node.id}>
+                  <td>{node.name}</td>
+                  <td>{node.type}</td>
+                  <td>{node.start_date ? new Date(node.start_date).toLocaleDateString() : '-'}</td>
+                  <td>{node.end_date ? new Date(node.end_date).toLocaleDateString() : '-'}</td>
+                  <td>{node.status}</td>
+                  <td>{node.progress_percent}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className={styles.addAntecedentSection}>
+          <button 
+            className={styles.addButton}
+            onClick={() => setShowCreateOptions(!showCreateOptions)}
           >
-            Soluciones constructivas
+            <AddIcon /> Agregar Antecedente
           </button>
 
-          {activeMenu === 'constructiveSolutions' && (
-            <div className={styles.subMenu}>
-              <button
-                className={classNames(styles.subMenuButton, {
-                  [styles.active]: activeSubMenu === 'fireSolutions'
-                })}
-                onClick={() => handleSubMenuClick('fireSolutions')}
-              >
-                Soluciones contra el fuego
-              </button>
-
-              {activeSubMenu === 'fireSolutions' && (
-                <div className={styles.subSubMenu}>
-                  <button
-                    className={classNames(styles.subSubMenuButton, {
-                      [styles.active]: activeSubSubMenu === 'additiveMethod'
-                    })}
-                    onClick={() => handleSubSubMenuClick('additiveMethod')}
-                  >
-                    Método aditivo de componentes
-                  </button>
-
-                  {activeSubSubMenu === 'additiveMethod' && (
-                    <div className={styles.actions}>
-                      <Link 
-                        to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/crear`}
-                        className={styles.actionLink}
-                      >
-                        Crear Solución
-                      </Link>
-                      <Link 
-                        to={`/proyectos/${projectId}/arquitectura/${architectureId}/soluciones/lista`}
-                        className={styles.actionLink}
-                      >
-                        Listar Soluciones
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              )}
+          {showCreateOptions && (
+            <div className={styles.antecedentesGrid}>
+              {antecedentOptions.map((option) => (
+                <button
+                  key={option.id}
+                  className={styles.antecedentCard}
+                  onClick={() => handleCreateNode(option.id)}
+                  disabled={addNode.isPending}
+                >
+                  <div className={styles.antecedentIcon}>
+                    {option.icon}
+                  </div>
+                  <h3>{option.label}</h3>
+                  <p>{option.description}</p>
+                </button>
+              ))}
             </div>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 };
 
-export default ArchitectureProjectDetail; 
+export default ArchitectureProjectDetail;

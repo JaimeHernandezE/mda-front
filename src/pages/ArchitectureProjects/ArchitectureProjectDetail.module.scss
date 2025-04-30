@@ -40,7 +40,7 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: $spacing-lg;
-  margin-bottom: $spacing-lg;
+  margin-bottom: $spacing-xl;
 }
 
 .mainInfo {
@@ -68,14 +68,14 @@
   .menuSection {
     display: flex;
     flex-direction: column;
-    height: 100%;
     gap: $spacing-sm;
+    position: sticky;
+    top: $spacing-lg;
 
     .menuButton {
       display: flex;
       align-items: center;
       gap: $spacing-md;
-      width: 100%;
       padding: $spacing-md;
       background-color: $background-paper;
       border: 1px solid $border-color;
@@ -83,7 +83,6 @@
       color: $text-primary;
       text-decoration: none;
       transition: all $transition-fast;
-      flex: 1;
 
       &:hover {
         background-color: color.scale($background-light, $lightness: -5%);
@@ -98,76 +97,133 @@
   }
 }
 
-.constructiveSolutions {
-  margin-top: $spacing-lg;
-  padding-top: $spacing-lg;
+.antecedentesSection {
+  margin-top: $spacing-xl;
+  padding-top: $spacing-xl;
   border-top: 1px solid $border-color;
-
+  
   h2 {
-    color: $primary-color;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
+    color: $text-primary;
     font-size: $font-size-xl;
   }
+}
 
-  .menuSection {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-sm;
-  }
+.tableContainer {
+  margin-bottom: $spacing-lg;
+  overflow-x: auto;
+  background: $white;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+}
 
-  .menuButton,
-  .subMenuButton,
-  .subSubMenuButton {
-    @include button-secondary;
-    width: 100%;
-    text-align: left;
+.antecedentesTable {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th, td {
     padding: $spacing-md;
-    font-size: $font-size-md;
-    transition: background-color 0.3s ease;
-
-    &.active {
-      background-color: $primary-color;
-      color: $text-light;
-    }
+    text-align: left;
+    border-bottom: 1px solid $border-color;
   }
 
-  .subMenu,
-  .subSubMenu {
-    margin-left: $spacing-md;
-    margin-top: $spacing-sm;
+  th {
+    background-color: $background-light;
+    color: $text-primary;
+    font-weight: 600;
+    white-space: nowrap;
   }
 
-  .actions {
-    margin-left: $spacing-md;
-    margin-top: $spacing-sm;
-    display: flex;
-    gap: $spacing-sm;
+  td {
+    color: $text-secondary;
+  }
 
-    .actionLink {
-      @include button-primary;
-      padding: $spacing-sm $spacing-md;
-      font-size: $font-size-sm;
-    }
+  tr:hover {
+    background-color: rgba($primary-color, 0.05);
   }
 }
 
-.loading {
-  text-align: center;
-  padding: $spacing-lg;
-  color: $text-secondary;
+.addAntecedentSection {
+  margin-top: $spacing-lg;
 }
 
-.error {
-  text-align: center;
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background-color: $primary-color;
+  color: $white;
+  border: none;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  font-size: $font-size-md;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+
+  svg {
+    font-size: $font-size-lg;
+  }
+}
+
+.antecedentesGrid {
+  margin-top: $spacing-md;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: $spacing-md;
+  background: $background-light;
   padding: $spacing-lg;
-  color: $error-color;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+}
 
-  h2 {
-    margin-bottom: $spacing-md;
+.antecedentCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-lg;
+  background: $white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-md;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: $primary-color;
   }
 
-  button {
-    @include button-primary;
-    margin-top: $spacing-md;
+  h3 {
+    margin: $spacing-sm 0;
+    color: $text-primary;
+    font-size: $font-size-lg;
   }
-} 
+
+  p {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    margin: 0;
+  }
+}
+
+.antecedentIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba($primary-color, 0.1);
+  border-radius: 50%;
+  margin-bottom: $spacing-sm;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    color: $primary-color;
+  }
+}
