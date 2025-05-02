@@ -1,13 +1,15 @@
+// src/pages/ArchitectureProjects/CreateArchitectureProject.tsx
+
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useArchitectureProjectMutations } from '../../hooks/useArchitectureProjects';
+import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { NodeType } from '../../types/project_nodes.types';
 import styles from './CreateArchitectureProject.module.scss';
 
 const CreateArchitectureProject: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { createArchitectureProject } = useArchitectureProjectMutations();
+  const { createProject } = useProjectNodes();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -16,14 +18,14 @@ const CreateArchitectureProject: React.FC = () => {
     type: 'architecture_subproject' as NodeType,
     status: 'en_estudio' as const,
     start_date: '',
-    parent: 0
+    parent: Number(projectId) || null,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -32,10 +34,10 @@ const CreateArchitectureProject: React.FC = () => {
     if (!projectId) return;
 
     try {
-      await createArchitectureProject.mutateAsync({
+      await createProject.mutateAsync({
         ...formData,
-        parent: parseInt(projectId),
-        type: 'architecture_subproject' // Aseguramos que se envía el tipo correcto
+        parent: Number(projectId),
+        type: 'architecture_subproject', // aseguramos el tipo correcto
       });
       navigate(`/proyectos/${projectId}`);
     } catch (error) {
@@ -46,7 +48,7 @@ const CreateArchitectureProject: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Crear Nuevo Proyecto de Arquitectura</h1>
-      
+
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
           <label htmlFor="name">Nombre del Proyecto</label>
@@ -109,8 +111,8 @@ const CreateArchitectureProject: React.FC = () => {
         </div>
 
         <div className={styles.formActions}>
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={() => navigate(`/proyectos/${projectId}`)}
             className={styles.cancelButton}
           >
@@ -125,4 +127,4 @@ const CreateArchitectureProject: React.FC = () => {
   );
 };
 
-export default CreateArchitectureProject; 
+export default CreateArchitectureProject;

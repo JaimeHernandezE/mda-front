@@ -1,55 +1,40 @@
 // src/hooks/useProjectNodes.ts
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { mapProjectNode } from '../mappers/project_node_mapper';
 import { ProjectNode, CreateProjectNodeDto, UpdateProjectNodeDto } from '../types/project_nodes.types';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 interface ProjectNodesFilters {
-  node_parent?: number;
+  parent?: number;
 }
 
-export const useProjectNodes = (filters?: ProjectNodesFilters) => {
+// ✅ Genérico <T> para poder usar ProjectNode, ArchitectureProjectNode, etc.
+export const useProjectNodes = <T extends ProjectNode = ProjectNode>(filters?: ProjectNodesFilters) => {
   const { accessToken } = useAuth();
   const queryClient = useQueryClient();
 
   const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: `Bearer ${accessToken}` },
   };
 
-  const getProjects = useQuery<ProjectNode[]>({
+  const getProjects = useQuery<T[]>({
     queryKey: ['projectNodes', filters],
-    queryFn: async () => {
+    queryFn: async (): Promise<T[]> => {
       const params = new URLSearchParams();
-      if (filters?.node_parent) {
-        params.append('node_parent', filters.node_parent.toString());
+      if (filters?.parent) {
+        params.append('parent', filters.parent.toString());
       }
       const response = await axios.get(`${API_URL}/project-nodes/?${params.toString()}`, axiosConfig);
-      return response.data;
+      const data = response.data;
+
+      return Array.isArray(data) ? data.map(mapProjectNode) as T[] : [];
     },
     enabled: !!accessToken,
   });
-
-  const getProjectsByArchitecture = async (architectureId: number) => {
-    const response = await axios.get(
-      `${API_URL}/project-nodes/by_architecture_project/${architectureId}/`,
-      axiosConfig
-    );
-    return response.data;
-  };
-
-  const useArchitectureNodes = (architectureId?: number) => {
-    return useQuery<ProjectNode[]>({
-      queryKey: ['architectureNodes', architectureId],
-      queryFn: () => getProjectsByArchitecture(architectureId!),
-      enabled: !!accessToken && !!architectureId,
-    });
-  };
 
   const createProject = useMutation({
     mutationFn: async (data: CreateProjectNodeDto) => {
@@ -77,7 +62,6 @@ export const useProjectNodes = (filters?: ProjectNodesFilters) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectNodes'] });
-      queryClient.invalidateQueries({ queryKey: ['architectureNodes'] });
     },
   });
 
@@ -97,7 +81,6 @@ export const useProjectNodes = (filters?: ProjectNodesFilters) => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['projectNodes'] });
-      queryClient.invalidateQueries({ queryKey: ['architectureNodes'] });
       queryClient.invalidateQueries({ queryKey: ['projectNode', variables.id] });
     },
   });
@@ -108,14 +91,12 @@ export const useProjectNodes = (filters?: ProjectNodesFilters) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectNodes'] });
-      queryClient.invalidateQueries({ queryKey: ['architectureNodes'] });
     },
   });
 
   return {
     projects: getProjects.data,
     isLoadingProjects: getProjects.isLoading,
-    useArchitectureNodes,
     createProject,
     updateProject,
     deleteProject,

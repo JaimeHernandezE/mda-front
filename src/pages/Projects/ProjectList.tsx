@@ -3,13 +3,14 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
-import { useProjectArchitectureProjects } from '../../hooks/useArchitectureProjects';
 import { ArchitectureProjectNode } from '../../types/architecture.types';
 import styles from './ProjectList.module.scss';
+import { ProjectNode } from '../../types/project_nodes.types';
+
 
 const ProjectList: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, isLoadingProjects } = useProjectNodes();
+  const { projects, isLoadingProjects } = useProjectNodes<ProjectNode>();
 
   const handleCreateProject = () => {
     navigate('/proyectos/crear');
@@ -42,10 +43,10 @@ const ProjectList: React.FC = () => {
               className={styles.projectCardContent}
               onClick={() => handleViewProject(project.id)}
             >
-              {project.cover_image ? (
+              {project.cover_image_url ? (
                 <div className={styles.coverImageContainer}>
                   <img 
-                    src={project.cover_image} 
+                    src={project.cover_image_url} 
                     alt={`Portada de ${project.name}`}
                     className={styles.coverImage}
                   />
@@ -79,9 +80,10 @@ const ProjectList: React.FC = () => {
   );
 };
 
-// Componente auxiliar para mostrar la lista de proyectos de arquitectura
 const ProjectArchitectureList: React.FC<{ projectId: number }> = ({ projectId }) => {
-  const { data: architectureProjects, isLoading } = useProjectArchitectureProjects(projectId);
+  const { projects: architectureProjects, isLoadingProjects: isLoading } = useProjectNodes<ArchitectureProjectNode>({
+    parent: projectId,
+  });
 
   if (isLoading) {
     return <div className={styles.loading}>Cargando proyectos de arquitectura...</div>;
@@ -93,7 +95,7 @@ const ProjectArchitectureList: React.FC<{ projectId: number }> = ({ projectId })
 
   return (
     <ul className={styles.architectureList}>
-      {architectureProjects.map((archProject: ArchitectureProjectNode) => (
+      {architectureProjects.map((archProject) => (
         <li key={archProject.id} className={styles.architectureItem}>
           <Link 
             to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}
@@ -111,4 +113,4 @@ const ProjectArchitectureList: React.FC<{ projectId: number }> = ({ projectId })
   );
 };
 
-export default ProjectList; 
+export default ProjectList;

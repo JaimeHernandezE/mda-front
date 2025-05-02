@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { useProjectArchitectureProjects } from '../../hooks/useArchitectureProjects';
-import { ArchitectureProjectNode } from '../../types/architecture.types';
 import styles from './ProjectDetail.module.scss';
 
 const ProjectDetail: React.FC = () => {
@@ -22,10 +21,10 @@ const ProjectDetail: React.FC = () => {
     status: project?.status || 'en_estudio',
     start_date: project?.start_date || '',
     end_date: project?.end_date || '',
-    cover_image: null as File | null
+    cover_image: null as File | null,
   });
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(project?.cover_image || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(project?.cover_image_url || null);
 
   const handleCreateArchitectureProject = () => {
     navigate(`/proyectos/${projectId}/arquitectura/crear`);
@@ -39,7 +38,7 @@ const ProjectDetail: React.FC = () => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -70,11 +69,8 @@ const ProjectDetail: React.FC = () => {
           }
         }
       });
-      
-      await updateProject.mutateAsync({ 
-        id: project.id, 
-        data: formDataToSend 
-      });
+
+      await updateProject.mutateAsync({ id: project.id, data: formDataToSend });
       setIsEditing(false);
     } catch (error) {
       console.error('Error al actualizar el proyecto:', error);
@@ -101,16 +97,10 @@ const ProjectDetail: React.FC = () => {
         <div className={styles.actions}>
           {!isEditing && (
             <>
-              <button 
-                className={styles.editButton}
-                onClick={() => setIsEditing(true)}
-              >
+              <button className={styles.editButton} onClick={() => setIsEditing(true)}>
                 Editar
               </button>
-              <button 
-                className={styles.deleteButton}
-                onClick={handleDelete}
-              >
+              <button className={styles.deleteButton} onClick={handleDelete}>
                 Eliminar
               </button>
             </>
@@ -120,199 +110,59 @@ const ProjectDetail: React.FC = () => {
 
       {isEditing ? (
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.formGroup}>
-            <label htmlFor="name">Nombre del Proyecto</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="description">Descripción</label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={4}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="status">Estado</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-            >
-              <option value="en_estudio">En Estudio</option>
-              <option value="pendiente">Pendiente</option>
-              <option value="finalizado">Finalizado</option>
-            </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="start_date">Fecha de Inicio</label>
-            <input
-              type="date"
-              id="start_date"
-              name="start_date"
-              value={formData.start_date || ''}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="end_date">Fecha de Fin</label>
-            <input
-              type="date"
-              id="end_date"
-              name="end_date"
-              value={formData.end_date || ''}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                name="is_active"
-                checked={formData.is_active}
-                onChange={handleInputChange}
-              />
-              Proyecto Activo
-            </label>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="cover_image">Imagen de Portada</label>
-            <input
-              type="file"
-              id="cover_image"
-              name="cover_image"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-            {previewUrl && (
-              <div className={styles.previewContainer}>
-                <img 
-                  src={previewUrl} 
-                  alt="Preview" 
-                  className={styles.previewImage}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className={styles.formActions}>
-            <button type="button" onClick={() => setIsEditing(false)}>
-              Cancelar
-            </button>
-            <button type="submit" className={styles.saveButton}>
-              Guardar Cambios
-            </button>
-          </div>
+          <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
+          <textarea name="description" value={formData.description} onChange={handleInputChange} required />
+          <select name="status" value={formData.status} onChange={handleInputChange}>
+            <option value="en_estudio">En Estudio</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+          <input type="date" name="start_date" value={formData.start_date || ''} onChange={handleInputChange} />
+          <input type="date" name="end_date" value={formData.end_date || ''} onChange={handleInputChange} />
+          <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleInputChange} />
+          <input type="file" name="cover_image" accept="image/*" onChange={handleFileChange} />
+          {previewUrl && <img src={previewUrl} alt="Preview" />}
+          <button type="submit">Guardar Cambios</button>
         </form>
       ) : (
-        <div className={styles.details}>
-          <div className={styles.detailItem}>
-            <h3>Nombre del Proyecto</h3>
-            <p>{project.name}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Descripción</h3>
-            <p>{project.description}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Estado</h3>
-            <p>{project.status}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Progreso</h3>
-            <p>{project.progress_percent}%</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Fecha de Inicio</h3>
-            <p>{project.start_date ? new Date(project.start_date).toLocaleDateString() : 'No definida'}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Fecha de Fin</h3>
-            <p>{project.end_date ? new Date(project.end_date).toLocaleDateString() : 'No definida'}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Estado del Proyecto</h3>
-            <p>{project.is_active ? 'Activo' : 'Inactivo'}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Fecha de Creación</h3>
-            <p>{new Date(project.created_at).toLocaleDateString()}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Última Modificación</h3>
-            <p>{new Date(project.updated_at).toLocaleDateString()}</p>
-          </div>
-
-          <div className={styles.detailItem}>
-            <h3>Imagen de Portada</h3>
-            {project.cover_image ? (
-              <div className={styles.coverImageContainer}>
-                <img 
-                  src={project.cover_image} 
-                  alt="Portada del proyecto" 
-                  className={styles.coverImage}
-                />
-              </div>
-            ) : (
-              <p>No hay imagen de portada</p>
-            )}
-          </div>
-
-          <div className={styles.architectureSection}>
-            <h2>Proyectos de Arquitectura</h2>
-            <button 
-              className={styles.createArchitectureButton}
-              onClick={handleCreateArchitectureProject}
-            >
-              Crear Nuevo Proyecto de Arquitectura
-            </button>
-            
-            {architectureProjects && architectureProjects.length > 0 ? (
-              <div className={styles.architectureList}>
-                {(architectureProjects as ArchitectureProjectNode[]).map((archProject) => (
-                  <div key={archProject.id} className={styles.architectureItem}>
-                    <Link to={`/proyectos/${projectId}/arquitectura/${archProject.id}`}>
-                      {archProject.architecture_data?.architecture_project_name || archProject.name}
-                    </Link>
-                    <span className={styles.status} data-active={archProject.is_active}>
-                      {archProject.is_active ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className={styles.noProjects}>No hay proyectos de arquitectura creados</p>
-            )}
-          </div>
+        <div>
+          <h3>{project.name}</h3>
+          <p>{project.description}</p>
+          <p>{project.status}</p>
+          <p>{project.progress_percent}% completado</p>
+          <p>{project.start_date ? new Date(project.start_date).toLocaleDateString() : 'No definida'}</p>
+          <p>{project.end_date ? new Date(project.end_date).toLocaleDateString() : 'No definida'}</p>
+          <p>{project.is_active ? 'Activo' : 'Inactivo'}</p>
+          <p>{new Date(project.created_at).toLocaleDateString()}</p>
+          <p>{new Date(project.updated_at).toLocaleDateString()}</p>
+          {project.cover_image_url ? (
+            <img src={project.cover_image_url} alt="Portada del proyecto" />
+          ) : (
+            <p>No hay imagen de portada</p>
+          )}
         </div>
       )}
+
+      <div>
+        <h2>Proyectos de Arquitectura</h2>
+        <button onClick={handleCreateArchitectureProject}>Crear Nuevo Proyecto de Arquitectura</button>
+        {architectureProjects && architectureProjects.length > 0 ? (
+          <ul>
+            {architectureProjects.map((arch) => (
+              <li key={arch.id}>
+                <Link to={`/proyectos/${projectId}/arquitectura/${arch.id}`}>
+                  {arch.architecture_data?.architecture_project_name || arch.name}
+                </Link>
+                <span>{arch.is_active ? 'Activo' : 'Inactivo'}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No hay proyectos de arquitectura creados</p>
+        )}
+      </div>
     </div>
   );
 };
 
-export default ProjectDetail; 
+export default ProjectDetail;

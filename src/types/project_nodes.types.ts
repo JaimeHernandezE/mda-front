@@ -48,6 +48,9 @@ export interface ProjectNode {
   progress_percent: number;
   created_at: string;
   updated_at: string;
+  file_url?: string | null;
+  cover_image_url?: string | null;
+
 }
 
 export interface CreateProjectNodeDto {
@@ -69,6 +72,8 @@ export interface CreateProjectNodeDto {
   end_date?: string | null;
   status?: NodeStatus;
   progress_percent?: number;
+  cover_image_url?: string | null;
+  file_url?: string | null;
 }
 
 export interface UpdateProjectNodeDto {
@@ -89,5 +94,7 @@ export interface UpdateProjectNodeDto {
   end_date?: string | null;
   status?: NodeStatus;
   progress_percent?: number;
+  cover_image_url?: string | null;
+  file_url?: string | null;
 }
 

@@ -1,5 +1,3 @@
-// src/pages/Projects/CreateProject.tsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
@@ -21,7 +19,7 @@ const CreateProject: React.FC = () => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -38,7 +36,6 @@ const CreateProject: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Crear Nuevo Proyecto</h1>
-      
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
           <label htmlFor="name">Nombre del Proyecto</label>
@@ -102,4 +99,4 @@ const CreateProject: React.FC = () => {
   );
 };
 
-export default CreateProject; 
+export default CreateProject;

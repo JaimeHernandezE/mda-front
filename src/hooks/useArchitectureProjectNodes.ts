@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { ProjectNode, CreateProjectNodeDto } from '../types/project_nodes.types';
+import { ProjectNode } from '../types/project_nodes.types';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
