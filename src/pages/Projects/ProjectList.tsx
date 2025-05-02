@@ -5,12 +5,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { ArchitectureProjectNode } from '../../types/architecture.types';
 import styles from './ProjectList.module.scss';
-import { ProjectNode } from '../../types/project_nodes.types';
+import { ProjectNode, NodeType } from '../../types/project_nodes.types';
 
 
 const ProjectList: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, isLoadingProjects } = useProjectNodes<ProjectNode>();
+  const { projects, isLoadingProjects } = useProjectNodes<ProjectNode>({
+    type: 'project' as NodeType
+  });
 
   const handleCreateProject = () => {
     navigate('/proyectos/crear');
@@ -83,6 +85,7 @@ const ProjectList: React.FC = () => {
 const ProjectArchitectureList: React.FC<{ projectId: number }> = ({ projectId }) => {
   const { projects: architectureProjects, isLoadingProjects: isLoading } = useProjectNodes<ArchitectureProjectNode>({
     parent: projectId,
+    type: 'architecture_subproject' as NodeType
   });
 
   if (isLoading) {

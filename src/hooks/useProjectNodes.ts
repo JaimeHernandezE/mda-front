@@ -4,12 +4,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { mapProjectNode } from '../mappers/project_node_mapper';
-import { ProjectNode, CreateProjectNodeDto, UpdateProjectNodeDto } from '../types/project_nodes.types';
+import { ProjectNode, CreateProjectNodeDto, UpdateProjectNodeDto, NodeType } from '../types/project_nodes.types';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 interface ProjectNodesFilters {
   parent?: number;
+  type?: NodeType;
 }
 
 // ✅ Genérico <T> para poder usar ProjectNode, ArchitectureProjectNode, etc.
@@ -28,10 +29,18 @@ export const useProjectNodes = <T extends ProjectNode = ProjectNode>(filters?: P
       if (filters?.parent) {
         params.append('parent', filters.parent.toString());
       }
+      if (filters?.type) {
+        params.append('type', filters.type);
+      }
       const response = await axios.get(`${API_URL}/project-nodes/?${params.toString()}`, axiosConfig);
       const data = response.data;
 
-      return Array.isArray(data) ? data.map(mapProjectNode) as T[] : [];
+      // Aplicar el filtro por tipo también en el cliente por si el backend no lo aplica
+      const mappedData = Array.isArray(data) ? data.map(mapProjectNode) as T[] : [];
+      if (filters?.type) {
+        return mappedData.filter(node => node.type === filters.type);
+      }
+      return mappedData;
     },
     enabled: !!accessToken,
   });
