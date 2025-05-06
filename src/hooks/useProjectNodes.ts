@@ -13,7 +13,6 @@ interface ProjectNodesFilters {
   type?: NodeType;
 }
 
-// ✅ Genérico <T> para poder usar ProjectNode, ArchitectureProjectNode, etc.
 export const useProjectNodes = <T extends ProjectNode = ProjectNode>(filters?: ProjectNodesFilters) => {
   const { accessToken } = useAuth();
   const queryClient = useQueryClient();
@@ -26,21 +25,10 @@ export const useProjectNodes = <T extends ProjectNode = ProjectNode>(filters?: P
     queryKey: ['projectNodes', filters],
     queryFn: async (): Promise<T[]> => {
       const params = new URLSearchParams();
-      if (filters?.parent) {
-        params.append('parent', filters.parent.toString());
-      }
-      if (filters?.type) {
-        params.append('type', filters.type);
-      }
+      if (filters?.parent) params.append('parent', filters.parent.toString());
+      if (filters?.type) params.append('type', filters.type);
       const response = await axios.get(`${API_URL}/project-nodes/?${params.toString()}`, axiosConfig);
-      const data = response.data;
-
-      // Aplicar el filtro por tipo también en el cliente por si el backend no lo aplica
-      const mappedData = Array.isArray(data) ? data.map(mapProjectNode) as T[] : [];
-      if (filters?.type) {
-        return mappedData.filter(node => node.type === filters.type);
-      }
-      return mappedData;
+      return Array.isArray(response.data) ? response.data.map(mapProjectNode) as T[] : [];
     },
     enabled: !!accessToken,
   });

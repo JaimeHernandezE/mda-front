@@ -99,6 +99,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginWithGoogle = async (googleToken: string) => {
     try {
+      // 1. Hacer GET para obtener la cookie CSRF
+      await api.get('/api/auth/social/hello/');
+
+      // 2. Hacer el POST de login social
       const response = await api.post('/api/auth/social/google/', { 
         access_token: googleToken 
       });

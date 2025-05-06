@@ -5,8 +5,6 @@ export interface ArchitectureProject {
   created: string;
   modified: string;
   project: number;
-  architecture_project_name: string | null;
-  architecture_project_description: string | null;
   is_active: boolean;
   start_date: string | null;
   permit_subtype: number | null;
@@ -16,8 +14,6 @@ export interface ArchitectureProject {
 export interface ArchitectureData {
   id: number;
   node: number;
-  architecture_project_name: string | null;
-  architecture_project_description: string | null;
   is_active: boolean;
   start_date: string | null;
   permit_subtype: number | null;

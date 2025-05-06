@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       <Container maxWidth="lg">
         <Box className={styles.content}>
           <Typography variant="body2" color="textSecondary">
-            © {new Date().getFullYear()} Mi Diario de Aprendizaje. Todos los derechos reservados.
+            © {new Date().getFullYear()} Manual de Arquitectura. Todos los derechos reservados.
           </Typography>
         </Box>
       </Container>

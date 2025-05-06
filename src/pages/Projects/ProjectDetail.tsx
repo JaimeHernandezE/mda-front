@@ -274,7 +274,7 @@ const ProjectDetail: React.FC = () => {
                       <ArchitectureIcon />
                     </div>
                     <div className={styles.cardContent}>
-                      <h3>{arch.architecture_data?.architecture_project_name || arch.name}</h3>
+                      <h3>{arch.name}</h3>
                       <p>{arch.description || 'Sin descripción'}</p>
                       <span className={styles.cardStatus}>
                         {arch.is_active ? 'Activo' : 'Inactivo'}

@@ -23,6 +23,7 @@ import ProjectList from "./pages/Projects/ProjectList";
 import ProjectDetail from "./pages/Projects/ProjectDetail";
 import CreateArchitectureProject from "./pages/ArchitectureProjects/CreateArchitectureProject";
 import ArchitectureProjectDetail from "./pages/ArchitectureProjects/ArchitectureProjectDetail";
+import EditArchitectureProject from "./pages/ArchitectureProjects/EditArchitectureProject";
 
 /** ────────────────────────────────────────────────────────────────────────────
  *  🎛️  React‑Query client (sin refetch on focus)
@@ -105,6 +106,9 @@ const App: React.FC = () => {
 
                       {/* /proyectos/:projectId/arquitectura/:architectureId */}
                       <Route path=":architectureId" element={<ArchitectureProjectDetail />} />
+
+                      {/* /proyectos/:projectId/arquitectura/:architectureId/editar */}
+                      <Route path=":architectureId/editar" element={<EditArchitectureProject />} />
                     </Route>
                   </Route>
                 </Route>
