@@ -177,7 +177,12 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
       </Menu>
       <div style={{ marginTop: 24 }}>
         {lists.map((list: any) => (
-          <Accordion key={list.id} expanded={!!openAccordions[list.id]} onChange={() => handleAccordionToggle(list.id)}>
+          <Accordion 
+            key={list.id} 
+            expanded={!!openAccordions[list.id]} 
+            onChange={() => handleAccordionToggle(list.id)}
+            TransitionProps={{ timeout: 0 }}
+          >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Box display="flex" alignItems="center" width="100%" justifyContent="space-between">
                 <Box display="flex" alignItems="center" gap={2}>
