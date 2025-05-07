@@ -99,3 +99,19 @@ export const useProjectNodes = <T extends ProjectNode = ProjectNode>(filters?: P
     deleteProject,
   };
 };
+
+export const useProjectNodeTree = (nodeId?: number | null) => {
+  const { accessToken } = useAuth();
+  const axiosConfig = {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  };
+  return useQuery({
+    queryKey: ['projectNodeTree', nodeId],
+    queryFn: async () => {
+      if (!nodeId) return null;
+      const { data } = await axios.get(`${API_URL}/project-nodes/${nodeId}/tree/`, axiosConfig);
+      return data;
+    },
+    enabled: !!nodeId && !!accessToken,
+  });
+};

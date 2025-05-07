@@ -4,6 +4,7 @@ import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { ArchitectureProjectNode } from '../../types/architecture.types';
 import { NodeType } from '../../types/project_nodes.types';
 import styles from './ArchitectureProjectDetail.module.scss';
+import ListadoDeAntecedentes from './ListadoDeAntecedentes';
 import {
   Home as HomeIcon,
   AttachMoney as BudgetIcon,
@@ -146,56 +147,7 @@ const ArchitectureProjectDetail: React.FC = () => {
           </div>
         </div>
 
-        <h2>Listado de antecedentes</h2>
-        {error && <div className={styles.error}>{error}</div>}
-        <div className={styles.tableContainer}>
-          <table className={styles.antecedentesTable}>
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Fecha inicio</th>
-                <th>Fecha fin</th>
-                <th>Estado</th>
-                <th>Progreso</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(activeStageChildren || []).map(node => (
-                <tr key={node.id}>
-                  <td>{node.name}</td>
-                  <td>{node.type}</td>
-                  <td>{node.start_date ? new Date(node.start_date).toLocaleDateString() : '-'}</td>
-                  <td>{node.end_date ? new Date(node.end_date).toLocaleDateString() : '-'}</td>
-                  <td>{node.status}</td>
-                  <td>{node.progress_percent}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className={styles.addAntecedentSection}>
-          <button className={styles.addButton} onClick={() => setShowCreateOptions(!showCreateOptions)}>
-            <AddIcon /> Agregar Antecedente
-          </button>
-          {showCreateOptions && (
-            <div className={styles.antecedentesGrid}>
-              {antecedentOptions.map(option => (
-                <button
-                  key={option.id}
-                  className={styles.antecedentCard}
-                  onClick={() => handleCreateNode(option.id)}
-                  disabled={createProject.isPending}
-                >
-                  <div className={styles.antecedentIcon}>{option.icon}</div>
-                  <h3>{option.label}</h3>
-                  <p>{option.description}</p>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        {activeStageId && <ListadoDeAntecedentes stageId={activeStageId} />}
       </section>
     </div>
   );
