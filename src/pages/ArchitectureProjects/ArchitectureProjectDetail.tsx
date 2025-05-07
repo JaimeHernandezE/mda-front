@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { ArchitectureProjectNode } from '../../types/architecture.types';
@@ -38,18 +38,23 @@ const ArchitectureProjectDetail: React.FC = () => {
   const { projectId, architectureId } = useParams<{ projectId: string; architectureId: string }>();
   const navigate = useNavigate();
 
-  const { projects: architectureProjects } = useProjectNodes<ArchitectureProjectNode>({ type: 'architecture_subproject' });
-  const architectureProject = architectureProjects?.find(p => p.id === Number(architectureId));
-
-  const { projects: childNodes, createProject } = useProjectNodes<ArchitectureProjectNode>({ parent: Number(architectureId) });
-
   const [showCreateOptions, setShowCreateOptions] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeStageId, setActiveStageId] = useState<number | null>(null);
 
-  const stages = childNodes?.filter(node => node.type === 'stage') || [];
-  const activeStage = stages.find(stage => stage.id === activeStageId);
-  const activeStageChildren = activeStage?.children || [];
+  // Get all stages for the selector
+  const { projects: stages } = useProjectNodes<ArchitectureProjectNode>({ parent: Number(architectureId), type: 'stage' });
+  // Get children of the active stage
+  const { projects: activeStageChildren, createProject } = useProjectNodes<ArchitectureProjectNode>({ parent: activeStageId ?? undefined });
+
+  const { projects: architectureProjects } = useProjectNodes<ArchitectureProjectNode>({ type: 'architecture_subproject' });
+  const architectureProject = architectureProjects?.find(p => p.id === Number(architectureId));
+
+  useEffect(() => {
+    if (stages && stages.length > 0 && !activeStageId) {
+      setActiveStageId(stages[0].id);
+    }
+  }, [stages, activeStageId]);
 
   if (!architectureId || !architectureProject) {
     return (
@@ -129,7 +134,7 @@ const ArchitectureProjectDetail: React.FC = () => {
       <section className={styles.antecedentesSection}>
         <div className={styles.stagesNavigation}>
           <div className={styles.stagesContainer}>
-            {stages.map(stage => (
+            {(stages || []).map(stage => (
               <button
                 key={stage.id}
                 className={`${styles.stageButton} ${activeStageId === stage.id ? styles.active : ''}`}
@@ -156,7 +161,7 @@ const ArchitectureProjectDetail: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {activeStageChildren.map(node => (
+              {(activeStageChildren || []).map(node => (
                 <tr key={node.id}>
                   <td>{node.name}</td>
                   <td>{node.type}</td>
