@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useProjectNodeTree } from '../../hooks/useProjectNodes';
 import { ArchitectureProjectNode } from '../../types/architecture.types';
 import { NodeType } from '../../types/project_nodes.types';
-import { Accordion, AccordionSummary, AccordionDetails, Button, Menu, MenuItem, TextField, Typography, IconButton, Box, LinearProgress } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Button, Popover, MenuItem, TextField, Typography, IconButton, Box, LinearProgress } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,6 +11,18 @@ import { useQueryClient } from '@tanstack/react-query';
 
 interface ListadoDeAntecedentesProps {
   stageId: number;
+}
+
+// Agregar función para extraer el error del backend
+function extractBackendError(err: any): string {
+  if (err?.response?.data && typeof err.response.data === 'object') {
+    const values = Object.values(err.response.data);
+    if (Array.isArray(values[0])) {
+      return (values as any[]).flat().join(' ');
+    }
+    return values.join(' ');
+  }
+  return err?.response?.data?.detail || err?.message || 'Error desconocido';
 }
 
 const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }) => {
@@ -83,7 +95,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
       setNewListName('');
       queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
     } catch (err: any) {
-      setError('Error al crear el listado');
+      setError(extractBackendError(err));
     }
   };
 
@@ -104,7 +116,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
       handleMenuClose();
       queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
     } catch (err: any) {
-      setError('Error al crear el antecedente');
+      setError(extractBackendError(err));
     }
   };
 
@@ -125,7 +137,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
       setEditListName('');
       queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
     } catch (err) {
-      setError('Error al actualizar el nombre del listado');
+      setError(extractBackendError(err));
     } finally {
       setSavingEdit(false);
     }
@@ -134,48 +146,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   return (
     <div>
       <Typography variant="h5" gutterBottom>Listado de antecedentes</Typography>
-      <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleAddAntecedentClick}>
-        Agregar Antecedente
-      </Button>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-        {lists.map((list: any) => (
-          <MenuItem key={list.id} onClick={() => handleSelectList(list.id)} selected={selectedListId === list.id}>
-            {list.name}
-          </MenuItem>
-        ))}
-        <MenuItem divider />
-        {creatingList ? (
-          <div style={{ padding: 8, width: 200 }}>
-            <TextField
-              label="Nombre del listado"
-              value={newListName}
-              onChange={e => setNewListName(e.target.value)}
-              size="small"
-              fullWidth
-              autoFocus
-            />
-            <Button onClick={handleCreateList} variant="contained" color="primary" size="small" style={{ marginTop: 8 }}>
-              Crear Listado
-            </Button>
-          </div>
-        ) : (
-          <MenuItem onClick={() => setCreatingList(true)}>
-            <AddIcon fontSize="small" /> Crear nuevo listado
-          </MenuItem>
-        )}
-        {selectedListId && !creatingList && (
-          <>
-            <MenuItem disabled>Selecciona el tipo de antecedente a crear:</MenuItem>
-            <MenuItem onClick={() => handleCreateAntecedent('document')}>Documento</MenuItem>
-            <MenuItem onClick={() => handleCreateAntecedent('form')}>Formulario</MenuItem>
-            <MenuItem onClick={() => handleCreateAntecedent('certificate')}>Certificado</MenuItem>
-            <MenuItem onClick={() => handleCreateAntecedent('construction_solution')}>Solución Constructiva</MenuItem>
-            <MenuItem onClick={() => handleCreateAntecedent('external_link')}>Enlace Externo</MenuItem>
-          </>
-        )}
-        {error && <MenuItem disabled style={{ color: 'red' }}>{error}</MenuItem>}
-      </Menu>
-      <div style={{ marginTop: 24 }}>
+      <div style={{ marginTop: 24, marginBottom: 64 }}>
         {lists.map((list: any) => (
           <Accordion 
             key={list.id} 
@@ -200,11 +171,6 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                   ) : (
                     <Typography variant="subtitle1" fontWeight={600}>{list.name}</Typography>
                   )}
-                  <Typography variant="body2" color="textSecondary">
-                    Estado: {list.status || '-'} | Progreso: {list.progress_percent ?? 0}%
-                  </Typography>
-                </Box>
-                <Box>
                   {editingListId === list.id ? (
                     <IconButton size="small" onClick={e => { e.stopPropagation(); handleSaveListName(list); }} disabled={savingEdit}>
                       <SaveIcon />
@@ -214,6 +180,28 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                       <EditIcon />
                     </IconButton>
                   )}
+                  <IconButton 
+                    size="small" 
+                    onClick={e => { e.stopPropagation(); setAnchorEl(e.currentTarget); setSelectedListId(list.id); setCreatingList(false); setError(null); }}
+                    color="primary"
+                    sx={{
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      width: 30,
+                      height: 30,
+                      borderRadius: 2,
+                      '&:hover': {
+                        backgroundColor: 'primary.dark',
+                      },
+                    }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">
+                    Estado: {list.status || '-'} | Progreso: {list.progress_percent ?? 0}%
+                  </Typography>
                 </Box>
               </Box>
             </AccordionSummary>
@@ -251,7 +239,48 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
             </AccordionDetails>
           </Accordion>
         ))}
+        <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={(e) => { setAnchorEl(e.currentTarget); setSelectedListId(null); setCreatingList(true); setError(null); }} style={{ marginTop: 16 }}>
+          Agregar Listado
+        </Button>
       </div>
+      {/* Popover para agregar listado o antecedentes */}
+      <Popover
+        open={!!anchorEl && Boolean(creatingList || selectedListId)}
+        anchorEl={anchorEl}
+        onClose={handleMenuClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Box sx={{ width: 400 }}>
+          {/* Si estamos creando un listado y no hay listado seleccionado */}
+          {creatingList && !selectedListId && (
+            <Box sx={{ padding: 2 }}>
+              <TextField
+                label="Nombre del listado"
+                value={newListName}
+                onChange={e => setNewListName(e.target.value)}
+                size="small"
+                fullWidth
+              />
+              <Button onClick={handleCreateList} variant="contained" color="primary" size="small" style={{ marginTop: 8 }}>
+                Crear Listado
+              </Button>
+            </Box>
+          )}
+          {/* Si hay un listado seleccionado, mostrar opciones para agregar antecedentes */}
+          {selectedListId && !creatingList && (
+            <>
+              <MenuItem disabled>Selecciona el tipo de antecedente a crear:</MenuItem>
+              <MenuItem onClick={() => handleCreateAntecedent('document')}>Documento</MenuItem>
+              <MenuItem onClick={() => handleCreateAntecedent('form')}>Formulario</MenuItem>
+              <MenuItem onClick={() => handleCreateAntecedent('certificate')}>Certificado</MenuItem>
+              <MenuItem onClick={() => handleCreateAntecedent('construction_solution')}>Solución Constructiva</MenuItem>
+              <MenuItem onClick={() => handleCreateAntecedent('external_link')}>Enlace Externo</MenuItem>
+            </>
+          )}
+          {error && <MenuItem disabled style={{ color: 'red' }}>{error}</MenuItem>}
+        </Box>
+      </Popover>
     </div>
   );
 };

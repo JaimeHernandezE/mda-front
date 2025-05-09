@@ -67,26 +67,6 @@ const ArchitectureProjectDetail: React.FC = () => {
     );
   }
 
-  const handleCreateNode = async (type: NodeType) => {
-    if (!activeStageId) {
-      setError('Selecciona una etapa antes de agregar antecedentes');
-      return;
-    }
-    try {
-      setError(null);
-      await createProject.mutateAsync({
-        parent: activeStageId,
-        name: `Nuevo ${type}`,
-        description: '',
-        is_active: true,
-        type,
-      });
-      setShowCreateOptions(false);
-    } catch (err: any) {
-      console.error('Error al crear el nodo:', err);
-      setError(err.response?.data?.detail || 'Error al crear el antecedente');
-    }
-  };
 
   return (
     <div className={styles.container}>
