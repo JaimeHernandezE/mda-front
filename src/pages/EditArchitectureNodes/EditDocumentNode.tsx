@@ -236,7 +236,7 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
                   size="small"
                   onClick={() => {
                     setFileMarkedForDelete(true);
-                    setFormData(prev => ({ ...prev, file: null }));
+                    setFormData(prev => ({ ...prev, file: null, progress_percent: 0 }));
                   }}
                 >
                   Eliminar
