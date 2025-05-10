@@ -192,15 +192,15 @@ function generateTableRowsWithAccordion({
       // Fila para documento
       rows.push(
         <tr key={node.id}>
-          <td style={{ padding: 8, paddingLeft: 8 + depth * 32 }}>
+          <td className={styles.tableCellIndent}>
             <Typography variant="body2">{node.name}</Typography>
           </td>
-          <td style={{ padding: 8 }}>{node.type}</td>
-          <td style={{ padding: 8 }}>{node.start_date ? new Date(node.start_date).toLocaleDateString() : '-'}</td>
-          <td style={{ padding: 8 }}>{node.end_date ? new Date(node.end_date).toLocaleDateString() : '-'}</td>
-          <td style={{ padding: 8 }}>-</td>
-          <td style={{ padding: 8 }}>-</td>
-          <td style={{ padding: 8, textAlign: 'right' }}>
+          <td className={styles.tableCell}>{node.type}</td>
+          <td className={styles.tableCell}>{node.start_date ? new Date(node.start_date).toLocaleDateString() : '-'}</td>
+          <td className={styles.tableCell}>{node.end_date ? new Date(node.end_date).toLocaleDateString() : '-'}</td>
+          <td className={styles.tableCell}>-</td>
+          <td className={styles.tableCell}>-</td>
+          <td className={styles.tableCellRight}>
             <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(node); }}>
               <EditIcon />
             </IconButton>
@@ -212,7 +212,7 @@ function generateTableRowsWithAccordion({
                 setDeleteTarget(node);
                 setShowDeleteModal(true);
               }}
-              sx={{ ml: 1 }}
+              className={styles.tableCellRightButton}
             >
               <DeleteIcon />
             </IconButton>
@@ -354,19 +354,19 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   return (
     <div>
       <Typography variant="h5" gutterBottom>Listado de antecedentes</Typography>
-      <div style={{ marginTop: 24, marginBottom: 64 }}>
+      <div className={styles.container}>
         {/* Tabla raíz de documentos y listados hijos con acordeón */}
-        <Box className={styles.listadoTable} sx={{ overflowX: 'auto', mt: 2 }}>
+        <Box className={styles.tableContainer}>
           <table className={styles.listadoTable}>
             <thead>
               <tr>
-                <th style={{ textAlign: 'left', padding: 8 }}>Nombre</th>
-                <th style={{ textAlign: 'left', padding: 8 }}>Tipo</th>
-                <th style={{ textAlign: 'left', padding: 8 }}>Fecha inicio</th>
-                <th style={{ textAlign: 'left', padding: 8 }}>Fecha fin</th>
-                <th style={{ textAlign: 'left', padding: 8 }}>Estado</th>
-                <th style={{ textAlign: 'left', padding: 8 }}>Progreso</th>
-                <th style={{ textAlign: 'right', padding: 8 }}>Acciones</th>
+                <th className={styles.tableHeader}>Nombre</th>
+                <th className={styles.tableHeader}>Tipo</th>
+                <th className={styles.tableHeader}>Fecha inicio</th>
+                <th className={styles.tableHeader}>Fecha fin</th>
+                <th className={styles.tableHeader}>Estado</th>
+                <th className={styles.tableHeader}>Progreso</th>
+                <th className={styles.tableHeader}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -393,7 +393,13 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
             </tbody>
           </table>
         </Box>
-        <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={(e) => { setAnchorEl(e.currentTarget); setSelectedListId(null); setCreatingList(true); setError(null); }} style={{ marginTop: 16 }}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          startIcon={<AddIcon />} 
+          onClick={(e) => { setAnchorEl(e.currentTarget); setSelectedListId(null); setCreatingList(true); setError(null); }} 
+          className={styles.addButton}
+        >
           Agregar Listado
         </Button>
       </div>
@@ -405,10 +411,10 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Box sx={{ width: 400 }}>
+        <Box className={styles.popoverContent}>
           {/* Si estamos creando un listado y no hay listado seleccionado */}
           {creatingList && !selectedListId && (
-            <Box sx={{ padding: 2 }}>
+            <Box className={styles.popoverSection}>
               <TextField
                 label="Nombre del listado"
                 value={newListName}
@@ -416,7 +422,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                 size="small"
                 fullWidth
               />
-              <Button onClick={handleCreateList} variant="contained" color="primary" size="small" style={{ marginTop: 8 }}>
+              <Button onClick={handleCreateList} variant="contained" color="primary" size="small" className={styles.popoverButton}>
                 Crear Listado
               </Button>
             </Box>
@@ -436,7 +442,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
           )}
           {/* Si estamos creando un listado contenedor dentro de otro listado */}
           {creatingList && selectedListId && (
-            <Box sx={{ padding: 2 }}>
+            <Box className={styles.popoverSection}>
               <TextField
                 label="Nombre del listado contenedor"
                 value={newListName}
@@ -459,12 +465,12 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                 } catch (err: any) {
                   setError(extractBackendError(err));
                 }
-              }} variant="contained" color="primary" size="small" style={{ marginTop: 8 }}>
+              }} variant="contained" color="primary" size="small" className={styles.popoverButton}>
                 Crear Listado Contenedor
               </Button>
             </Box>
           )}
-          {error && <MenuItem disabled style={{ color: 'red' }}>{error}</MenuItem>}
+          {error && <MenuItem disabled className={styles.errorText}>{error}</MenuItem>}
         </Box>
       </Popover>
       {/* Modal de confirmación para eliminar */}
