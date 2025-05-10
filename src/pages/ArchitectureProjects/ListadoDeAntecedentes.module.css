@@ -25,7 +25,8 @@
 
 .listadoCellDescripcionIndent {
   padding-top: 0;
-  padding-bottom: 0 !important;
+  padding-bottom: 0;
+  padding-left: 30px;
 }
 
 .descripcion {
