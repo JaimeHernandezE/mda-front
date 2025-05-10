@@ -64,6 +64,7 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fileMarkedForDelete, setFileMarkedForDelete] = useState(false);
 
   useEffect(() => {
     if (node) {
@@ -78,6 +79,7 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
         file: node.file || null,
       });
       setSelectedFile(null);
+      setFileMarkedForDelete(false);
     }
   }, [node]);
 
@@ -120,6 +122,11 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
       // Add file if selected
       if (selectedFile) {
         formDataToSend.append('file', selectedFile);
+      }
+
+      // Si el usuario eliminó el archivo, agrega delete_file
+      if (fileMarkedForDelete) {
+        formDataToSend.append('delete_file', 'true');
       }
 
       // Add type
@@ -219,7 +226,7 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
             <Typography variant="subtitle2" gutterBottom>
               Archivo
             </Typography>
-            {node?.file_url && !selectedFile && (
+            {node?.file_url && !selectedFile && !fileMarkedForDelete && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
                 <a href={node.file_url} target="_blank" rel="noopener noreferrer">
                   {`Descargar ${node.file_url.split('/').pop()}`}
@@ -228,6 +235,7 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
                   color="error"
                   size="small"
                   onClick={() => {
+                    setFileMarkedForDelete(true);
                     setFormData(prev => ({ ...prev, file: null }));
                   }}
                 >
