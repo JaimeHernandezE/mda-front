@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useProjectNodeTree } from '../../hooks/useProjectNodes';
-import { NodeType } from '../../types/project_nodes.types';
+import { NodeType, ProjectNode } from '../../types/project_nodes.types';
 import { Button, Popover, MenuItem, TextField, Typography, IconButton, Box, } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
@@ -14,6 +14,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './ListadoDeAntecedentes.module.scss';
+import EditDocumentNode from '../EditArchitectureNodes/EditDocumentNode';
 
 interface ListadoDeAntecedentesProps {
   stageId: number;
@@ -249,6 +250,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [editingNode, setEditingNode] = useState<ProjectNode | null>(null);
 
   // For creating lists and antecedentes, fallback to useProjectNodes for mutations
   const { createProject: createList, updateProject, deleteProject } = require('../../hooks/useProjectNodes').useProjectNodes();
@@ -317,9 +319,13 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   };
 
   const handleEditList = (list: any) => {
-    setEditingListId(list.id);
-    setEditListName(list.name);
-    setEditListDescription(list.description || '');
+    if (list.type === 'document') {
+      setEditingNode(list);
+    } else {
+      setEditingListId(list.id);
+      setEditListName(list.name);
+      setEditListDescription(list.description || '');
+    }
   };
 
   const handleSaveListName = async (list: any) => {
@@ -502,6 +508,12 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
           <Button onClick={handleDelete} color="error" disabled={deleting} variant="contained">Eliminar</Button>
         </DialogActions>
       </Dialog>
+      <EditDocumentNode
+        open={!!editingNode}
+        onClose={() => setEditingNode(null)}
+        node={editingNode}
+        stageId={stageId}
+      />
     </div>
   );
 };
