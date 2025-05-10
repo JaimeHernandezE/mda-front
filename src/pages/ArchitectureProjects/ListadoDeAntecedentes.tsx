@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useProjectNodeTree } from '../../hooks/useProjectNodes';
 import { NodeType } from '../../types/project_nodes.types';
-import { Accordion, AccordionSummary, AccordionDetails, Button, Popover, MenuItem, TextField, Typography, IconButton, Box, LinearProgress } from '@mui/material';
+import { Button, Popover, MenuItem, TextField, Typography, IconButton, Box, } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,6 +13,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import { useQueryClient } from '@tanstack/react-query';
+import styles from './ListadoDeAntecedentes.module.scss';
 
 interface ListadoDeAntecedentesProps {
   stageId: number;
@@ -30,24 +31,6 @@ function extractBackendError(err: any): string {
   return err?.response?.data?.detail || err?.message || 'Error desconocido';
 }
 
-// Nueva función recursiva para renderizar listados (acordeones)
-interface RenderListAccordionProps {
-  list: any;
-  openAccordions: { [key: number]: boolean };
-  handleAccordionToggle: (listId: number) => void;
-  editingListId: number | null;
-  editListName: string;
-  setEditListName: React.Dispatch<React.SetStateAction<string>>;
-  savingEdit: boolean;
-  handleSaveListName: (list: any) => void;
-  handleEditList: (list: any) => void;
-  setAnchorEl: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
-  setSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
-  setCreatingList: React.Dispatch<React.SetStateAction<boolean>>;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
-  isRoot?: boolean;
-}
-
 // Restaurar la interfaz para el tipado de generateTableRowsWithAccordion
 interface GenerateTableRowsProps {
   nodes: any[];
@@ -55,6 +38,8 @@ interface GenerateTableRowsProps {
   editingListId: number | null;
   editListName: string;
   setEditListName: React.Dispatch<React.SetStateAction<string>>;
+  editListDescription: string;
+  setEditListDescription: React.Dispatch<React.SetStateAction<string>>;
   savingEdit: boolean;
   handleSaveListName: (list: any) => void;
   handleEditList: (list: any) => void;
@@ -75,6 +60,8 @@ function generateTableRowsWithAccordion({
   editingListId,
   editListName,
   setEditListName,
+  editListDescription,
+  setEditListDescription,
   savingEdit,
   handleSaveListName,
   handleEditList,
@@ -93,11 +80,10 @@ function generateTableRowsWithAccordion({
   let rows: React.ReactNode[] = [];
   nodes.forEach((node: any) => {
     if (node.type === 'list') {
-      // Fila para el listado hijo con acordeón
       rows.push(
         <React.Fragment key={node.id}>
-          <tr style={{ background: '#f7fafd', cursor: 'pointer' }}>
-            <td style={{ padding: 8, paddingLeft: 8 + depth * 32 }} onClick={() => handleAccordionToggle(node.id)}>
+          <tr className={styles.listadoRow}>
+            <td className={styles.listadoCellNombre + ' ' + (depth > 0 ? styles.listadoCellNombreIndent : '')} onClick={() => handleAccordionToggle(node.id)}>
               <Box display="flex" alignItems="center" gap={1}>
                 <IconButton size="small" onClick={e => { e.stopPropagation(); handleAccordionToggle(node.id); }}>
                   {openAccordions[node.id] ? <ExpandMoreIcon sx={{ transform: 'rotate(180deg)' }} /> : <ExpandMoreIcon />}
@@ -118,12 +104,12 @@ function generateTableRowsWithAccordion({
                 )}
               </Box>
             </td>
-            <td style={{ padding: 8 }}><strong>Listado</strong></td>
-            <td style={{ padding: 8 }}></td>
-            <td style={{ padding: 8 }}></td>
-            <td style={{ padding: 8 }}>{node.status || '-'}</td>
-            <td style={{ padding: 8 }}>{node.progress_percent ?? 0}%</td>
-            <td style={{ padding: 8, textAlign: 'right' }}>
+            <td className={styles.listadoCell}></td>
+            <td className={styles.listadoCell}></td>
+            <td className={styles.listadoCell}></td>
+            <td className={styles.listadoCell}>{node.status || '-'}</td>
+            <td className={styles.listadoCell}>{node.progress_percent ?? 0}%</td>
+            <td className={styles.acciones}>
               {editingListId === node.id ? (
                 <IconButton size="small" onClick={e => { e.stopPropagation(); handleSaveListName(node); }} disabled={savingEdit}>
                   <SaveIcon />
@@ -136,18 +122,7 @@ function generateTableRowsWithAccordion({
               <IconButton
                 size="small"
                 onClick={e => { e.stopPropagation(); setAnchorEl(e.currentTarget); setSelectedListId(node.id); setCreatingList(false); setError(null); }}
-                color="primary"
-                sx={{
-                  backgroundColor: 'primary.main',
-                  color: 'white',
-                  width: 30,
-                  height: 30,
-                  borderRadius: 2,
-                  ml: 1,
-                  '&:hover': {
-                    backgroundColor: 'primary.dark',
-                  },
-                }}
+                className={styles.botonAzul}
               >
                 <AddIcon />
               </IconButton>
@@ -159,10 +134,34 @@ function generateTableRowsWithAccordion({
                   setDeleteTarget(node);
                   setShowDeleteModal(true);
                 }}
-                sx={{ ml: 1 }}
+                className={styles.botonRojo}
               >
                 <DeleteIcon />
               </IconButton>
+            </td>
+          </tr>
+          {/* Fila para la descripción del listado */}
+          <tr className={styles.listadoRow}>
+            <td colSpan={8} className={styles.listadoCellNombreIndent}>
+              {editingListId === node.id ? (
+                <TextField
+                  value={editListDescription}
+                  onChange={e => setEditListDescription(e.target.value)}
+                  size="small"
+                  variant="standard"
+                  placeholder="Descripción"
+                  fullWidth
+                  multiline
+                  minRows={1}
+                  InputProps={{ className: styles.descripcion }}
+                />
+              ) : (
+                node.description && (
+                  <Typography variant="body2" className={styles.descripcion}>
+                    {node.description}
+                  </Typography>
+                )
+              )}
             </td>
           </tr>
           {openAccordions[node.id] && (
@@ -174,6 +173,8 @@ function generateTableRowsWithAccordion({
               editingListId,
               editListName,
               setEditListName,
+              editListDescription,
+              setEditListDescription,
               savingEdit,
               handleSaveListName,
               handleEditList,
@@ -237,6 +238,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   const [error, setError] = useState<string | null>(null);
   const [editingListId, setEditingListId] = useState<number | null>(null);
   const [editListName, setEditListName] = useState<string>('');
+  const [editListDescription, setEditListDescription] = useState<string>('');
   const [savingEdit, setSavingEdit] = useState(false);
   // Estado para eliminar
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
@@ -312,6 +314,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   const handleEditList = (list: any) => {
     setEditingListId(list.id);
     setEditListName(list.name);
+    setEditListDescription(list.description || '');
   };
 
   const handleSaveListName = async (list: any) => {
@@ -320,10 +323,11 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
     try {
       await updateProject.mutateAsync({
         id: list.id,
-        data: { name: editListName, type: 'list' },
+        data: { name: editListName, description: editListDescription, type: 'list' },
       });
       setEditingListId(null);
       setEditListName('');
+      setEditListDescription('');
       queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
     } catch (err) {
       setError(extractBackendError(err));
@@ -352,8 +356,8 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
       <Typography variant="h5" gutterBottom>Listado de antecedentes</Typography>
       <div style={{ marginTop: 24, marginBottom: 64 }}>
         {/* Tabla raíz de documentos y listados hijos con acordeón */}
-        <Box sx={{ overflowX: 'auto', mt: 2 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <Box className={styles.listadoTable} sx={{ overflowX: 'auto', mt: 2 }}>
+          <table className={styles.listadoTable}>
             <thead>
               <tr>
                 <th style={{ textAlign: 'left', padding: 8 }}>Nombre</th>
@@ -374,6 +378,8 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                 editingListId,
                 editListName,
                 setEditListName,
+                editListDescription,
+                setEditListDescription,
                 savingEdit,
                 handleSaveListName,
                 handleEditList,
@@ -445,13 +451,6 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                 }
                 setError(null);
                 try {
-                  const result = await createList.mutateAsync({
-                    parent: selectedListId,
-                    name: newListName,
-                    description: '',
-                    is_active: true,
-                    type: 'list' as NodeType,
-                  });
                   setCreatingList(false);
                   setNewListName('');
                   setSelectedListId(null);

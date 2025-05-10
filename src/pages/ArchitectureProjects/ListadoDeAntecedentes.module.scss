@@ -1,0 +1,50 @@
+@use '../../styles/variables' as *;
+
+.listadoTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listadoRow {
+  background: $background-color;
+}
+
+.listadoCell {
+  padding: 8px;
+}
+
+.listadoCellNombre {
+  padding-left: 8px;
+}
+
+.listadoCellNombreIndent {
+  padding-left: 56px;
+}
+
+.descripcion {
+  color: $secondary-color;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+.acciones {
+  text-align: right;
+  padding: 8px;
+}
+
+.botonAzul {
+  background-color: $primary-color;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  margin-left: 4px;
+  &:hover {
+    background-color: $secondary-color;
+  }
+}
+
+.botonRojo {
+  color: $error-color;
+  margin-left: 4px;
+} 
