@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useProjectNodeTree } from '../../hooks/useProjectNodes';
-import { ArchitectureProjectNode } from '../../types/architecture.types';
 import { NodeType } from '../../types/project_nodes.types';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Popover, MenuItem, TextField, Typography, IconButton, Box, LinearProgress } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -47,131 +46,6 @@ interface RenderListAccordionProps {
   setCreatingList: React.Dispatch<React.SetStateAction<boolean>>;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   isRoot?: boolean;
-}
-
-// Recopilar todos los documentos (antecedentes) de todos los niveles, con nivel de profundidad
-function collectAllDocuments(list: any, depth = 0): any[] {
-  let docs: any[] = [];
-  (list.children || []).forEach((node: any) => {
-    if (node.type === 'list') {
-      docs = docs.concat(collectAllDocuments(node, depth + 1));
-    } else {
-      docs.push({ ...node, depth });
-    }
-  });
-  return docs;
-}
-
-function renderListAccordion({
-  list,
-  openAccordions,
-  handleAccordionToggle,
-  editingListId,
-  editListName,
-  setEditListName,
-  savingEdit,
-  handleSaveListName,
-  handleEditList,
-  setAnchorEl,
-  setSelectedListId,
-  setCreatingList,
-  setError,
-  isRoot = false,
-}: RenderListAccordionProps) {
-  // Hijos de tipo 'list' (contenedores)
-  const childLists = (list.children || []).filter((n: any) => n.type === 'list');
-  // Hijos que no son listados (antecedentes)
-  const childNodes = (list.children || []).filter((n: any) => n.type !== 'list');
-
-  return (
-    <Accordion
-      key={list.id}
-      expanded={!!openAccordions[list.id]}
-      onChange={() => handleAccordionToggle(list.id)}
-      TransitionProps={{ timeout: 0 }}
-      sx={{ ml: isRoot ? 0 : 3 }} // solo indentación, sin borde
-    >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Box display="flex" alignItems="center" width="100%" justifyContent="space-between">
-          <Box display="flex" alignItems="center" gap={2}>
-            {editingListId === list.id ? (
-              <TextField
-                value={editListName}
-                onChange={e => setEditListName(e.target.value)}
-                size="small"
-                variant="standard"
-                disabled={savingEdit}
-                onClick={e => e.stopPropagation()}
-                onFocus={e => e.stopPropagation()}
-                sx={{ minWidth: 120 }}
-              />
-            ) : (
-              <Typography variant="subtitle1" fontWeight={600}>{list.name}</Typography>
-            )}
-            {editingListId === list.id ? (
-              <IconButton size="small" onClick={e => { e.stopPropagation(); handleSaveListName(list); }} disabled={savingEdit}>
-                <SaveIcon />
-              </IconButton>
-            ) : (
-              <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(list); }}>
-                <EditIcon />
-              </IconButton>
-            )}
-            <IconButton
-              size="small"
-              onClick={e => { e.stopPropagation(); setAnchorEl(e.currentTarget); setSelectedListId(list.id); setCreatingList(false); setError(null); }}
-              color="primary"
-              sx={{
-                backgroundColor: 'primary.main',
-                color: 'white',
-                width: 30,
-                height: 30,
-                borderRadius: 2,
-                '&:hover': {
-                  backgroundColor: 'primary.dark',
-                },
-              }}
-            >
-              <AddIcon />
-            </IconButton>
-          </Box>
-          {isRoot && (
-            <Box>
-              <Typography variant="body2" color="textSecondary">
-                Estado: {list.status || '-'} | Progreso: {list.progress_percent ?? 0}%
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      </AccordionSummary>
-      <AccordionDetails>
-        {/* Renderizar hijos de tipo 'list' (contenedores) recursivamente */}
-        {childLists.length > 0 && (
-          <Box>
-            {childLists.map((childList: any) =>
-              renderListAccordion({
-                list: childList,
-                openAccordions,
-                handleAccordionToggle,
-                editingListId,
-                editListName,
-                setEditListName,
-                savingEdit,
-                handleSaveListName,
-                handleEditList,
-                setAnchorEl,
-                setSelectedListId,
-                setCreatingList,
-                setError,
-                isRoot: false,
-              })
-            )}
-          </Box>
-        )}
-        {/* Ya no renderizamos los documentos aquí, solo en la tabla raíz */}
-      </AccordionDetails>
-    </Accordion>
-  );
 }
 
 // Restaurar la interfaz para el tipado de generateTableRowsWithAccordion
@@ -383,25 +257,12 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
     setOpenAccordions(prev => ({ ...prev, [listId]: !prev[listId] }));
   };
 
-  const handleAddAntecedentClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedListId(null);
-    setNewListName('');
-    setCreatingList(false);
-    setError(null);
-  };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
     setSelectedListId(null);
     setNewListName('');
     setCreatingList(false);
     setError(null);
-  };
-
-  const handleSelectList = (listId: number) => {
-    setSelectedListId(listId);
-    setCreatingList(false);
   };
 
   const handleCreateList = async () => {
