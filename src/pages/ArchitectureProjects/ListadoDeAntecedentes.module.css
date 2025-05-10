@@ -29,12 +29,16 @@
   padding-left: 30px;
 }
 
-.descripcion {
+.textDescripcion {
   color: #1976d2;
   font-size: 14px;
   margin-top: 0;
   margin-bottom: 1rem;
   padding-left: 20px;
+}
+
+.textDocument {
+  font-size: 14px;
 }
 
 .acciones {
@@ -131,7 +135,7 @@
   padding-left: 150px !important;
 }
 
-.nombre {
+.textNombre {
   font-size: 16px;
   font-weight: 600;
   color: #333333;

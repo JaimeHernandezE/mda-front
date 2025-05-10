@@ -2,51 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { ArchitectureProjectNode } from '../../types/architecture.types';
-import { NodeType } from '../../types/project_nodes.types';
 import styles from './ArchitectureProjectDetail.module.scss';
 import ListadoDeAntecedentes from './ListadoDeAntecedentes';
 import {
   Home as HomeIcon,
   AttachMoney as BudgetIcon,
   People as PeopleIcon,
-  Description as DocumentIcon,
-  Assignment as FormIcon,
-  VerifiedUser as CertificateIcon,
-  Build as ConstructionIcon,
-  Link as LinkIcon,
-  Add as AddIcon,
-  Edit as EditIcon,
-  List as ListIcon,
+  Edit as EditIcon
 } from '@mui/icons-material';
-
-interface AntecedentOption {
-  id: NodeType;
-  label: string;
-  icon: React.ReactElement;
-  description: string;
-}
-
-const antecedentOptions: AntecedentOption[] = [
-  { id: 'document', label: 'Documento', icon: <DocumentIcon />, description: 'Agregar un documento al proyecto' },
-  { id: 'form', label: 'Formulario', icon: <FormIcon />, description: 'Agregar un formulario al proyecto' },
-  { id: 'certificate', label: 'Certificado', icon: <CertificateIcon />, description: 'Agregar un certificado al proyecto' },
-  { id: 'construction_solution', label: 'Solución Constructiva', icon: <ConstructionIcon />, description: 'Agregar una solución constructiva' },
-  { id: 'external_link', label: 'Enlace Externo', icon: <LinkIcon />, description: 'Agregar un enlace externo' },
-  { id: 'list', label: 'Listado', icon: <ListIcon />, description: 'Agregar un listado al proyecto' },
-];
 
 const ArchitectureProjectDetail: React.FC = () => {
   const { projectId, architectureId } = useParams<{ projectId: string; architectureId: string }>();
   const navigate = useNavigate();
 
-  const [showCreateOptions, setShowCreateOptions] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [activeStageId, setActiveStageId] = useState<number | null>(null);
 
   // Get all stages for the selector
   const { projects: stages } = useProjectNodes<ArchitectureProjectNode>({ parent: Number(architectureId), type: 'stage' });
-  // Get children of the active stage
-  const { projects: activeStageChildren, createProject } = useProjectNodes<ArchitectureProjectNode>({ parent: activeStageId ?? undefined });
 
   const { projects: architectureProjects } = useProjectNodes<ArchitectureProjectNode>({ type: 'architecture_subproject' });
   const architectureProject = architectureProjects?.find(p => p.id === Number(architectureId));

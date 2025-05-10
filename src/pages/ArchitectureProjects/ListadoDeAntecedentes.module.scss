@@ -31,13 +31,17 @@
   padding-left: 30px;
 }
 
-.descripcion {
+.textDescripcion {
   color: $primary-color;
   font-size: $font-size-sm;
   margin-top: 0;
   margin-bottom: 1rem;
   padding-left: 20px;
 
+}
+
+.textDocument {
+  font-size: $font-size-sm;
 }
 
 .acciones {
@@ -134,7 +138,7 @@
 }
 // Puedes agregar más niveles si es necesario 
 
-.nombre {
+.textNombre {
   font-size: $font-size-md;
   font-weight: 600;
   color: $text-color;

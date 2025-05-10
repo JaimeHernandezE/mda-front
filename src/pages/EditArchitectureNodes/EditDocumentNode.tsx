@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -58,11 +58,30 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
     end_date: node?.end_date ? new Date(node.end_date).toISOString().split('T')[0] : '',
     status: node?.status || 'pendiente',
     progress_percent: node?.progress_percent || 0,
+    file: node?.file || null,
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (node) {
+      setFormData({
+        name: node.name || '',
+        description: node.description || '',
+        file_type: node.file_type?.id || null,
+        start_date: node.start_date ? new Date(node.start_date).toISOString().split('T')[0] : '',
+        end_date: node.end_date ? new Date(node.end_date).toISOString().split('T')[0] : '',
+        status: node.status || 'pendiente',
+        progress_percent: node.progress_percent || 0,
+        file: node.file || null,
+      });
+      setSelectedFile(null);
+    }
+  }, [node]);
+
+  console.log('node', node);
 
   const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -200,6 +219,22 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
             <Typography variant="subtitle2" gutterBottom>
               Archivo
             </Typography>
+            {node?.file_url && !selectedFile && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                <a href={node.file_url} target="_blank" rel="noopener noreferrer">
+                  {`Descargar ${node.file_url.split('/').pop()}`}
+                </a>
+                <Button
+                  color="error"
+                  size="small"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, file: null }));
+                  }}
+                >
+                  Eliminar
+                </Button>
+              </Box>
+            )}
             <input
               type="file"
               onChange={handleFileChange}

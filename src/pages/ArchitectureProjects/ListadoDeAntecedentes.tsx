@@ -101,7 +101,7 @@ function generateTableRowsWithAccordion({
                     sx={{ minWidth: 120 }}
                   />
                 ) : (
-                  <Typography className={styles.nombre}>{node.name}</Typography>
+                  <Typography className={styles.textNombre}>{node.name}</Typography>
                 )}
               </Box>
             </td>
@@ -158,7 +158,7 @@ function generateTableRowsWithAccordion({
                 />
               ) : (
                 node.description && (
-                  <Typography className={styles.descripcion}>
+                  <Typography className={styles.textDescripcion}>
                     {node.description}
                   </Typography>
                 )
@@ -189,35 +189,44 @@ function generateTableRowsWithAccordion({
                 setShowDeleteModal,
               })}
               {/* Luego renderiza los documentos hijos de este listado */}
-              {(node.children || []).filter((n: any) => n.type !== 'list').map((doc: any) => (
-                <tr key={doc.id}>
-                  <td className={`${styles.tableCellIndent} ${styles[`indent-${depth + 1}`]}`}>
-                    <Typography variant="body2">{doc.name}</Typography>
-                  </td>
-                  <td className={styles.tableCell}>{doc.type}</td>
-                  <td className={styles.tableCell}>{doc.start_date ? new Date(doc.start_date).toLocaleDateString() : '-'}</td>
-                  <td className={styles.tableCell}>{doc.end_date ? new Date(doc.end_date).toLocaleDateString() : '-'}</td>
-                  <td className={styles.tableCell}>-</td>
-                  <td className={styles.tableCell}>-</td>
-                  <td className={styles.tableCellRight}>
-                    <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(doc); }}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={e => {
-                        e.stopPropagation();
-                        setDeleteTarget(doc);
-                        setShowDeleteModal(true);
-                      }}
-                      className={styles.tableCellRightButton}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </td>
-                </tr>
-              ))}
+              {(node.children || []).filter((n: any) => n.type !== 'list').map((doc: any) => {
+                console.log('Documento:', doc); // Debug: muestra la data del documento
+                return (
+                  <tr key={doc.id}>
+                    <td className={`${styles.tableCellIndent} ${styles[`indent-${depth + 1}`]}`}>
+                      {doc.file_url ? (
+                        <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className={styles.textDocument}>
+                          {doc.name}
+                        </a>
+                      ) : (
+                        <Typography className={styles.textDocument}>{doc.name}</Typography>
+                      )}
+                    </td>
+                    <td className={styles.tableCell}>{doc.type_display}</td>
+                    <td className={styles.tableCell}>{doc.start_date ? new Date(doc.start_date).toLocaleDateString() : '-'}</td>
+                    <td className={styles.tableCell}>{doc.end_date ? new Date(doc.end_date).toLocaleDateString() : '-'}</td>
+                    <td className={styles.tableCell}>{doc.status || '-'}</td>
+                    <td className={styles.tableCell}>{doc.progress_percent ?? 0}%</td>
+                    <td className={styles.tableCellRight}>
+                      <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(doc); }}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={e => {
+                          e.stopPropagation();
+                          setDeleteTarget(doc);
+                          setShowDeleteModal(true);
+                        }}
+                        className={styles.tableCellRightButton}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </td>
+                  </tr>
+                );
+              })}
             </>
           )}
         </React.Fragment>
