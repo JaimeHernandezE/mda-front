@@ -1,7 +1,7 @@
 .container {
-  max-width: 800px;
-  margin: 0 auto;
   padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .header {
@@ -9,120 +9,295 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
 }
-
-.title {
+.header .headerContent h1 {
+  margin: 0;
   font-size: 2rem;
   color: #333;
-  margin: 0;
 }
-
-.actions {
+.header .headerContent .status {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+.header .actions {
   display: flex;
   gap: 1rem;
 }
-
-.editButton,
-.deleteButton,
-.saveButton {
+.header .actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
-
-.editButton {
-  background-color: #4CAF50;
+.header .actions button svg {
+  font-size: 1.2rem;
+}
+.header .actions .editButton {
+  background: #007bff;
   color: white;
+  border: none;
 }
-.editButton:hover {
-  background-color: #45a049;
+.header .actions .editButton:hover {
+  background: #0056b3;
 }
-
-.deleteButton {
-  background-color: #f44336;
+.header .actions .deleteButton {
+  background: #dc3545;
   color: white;
+  border: none;
 }
-.deleteButton:hover {
-  background-color: #da190b;
+.header .actions .deleteButton:hover {
+  background: #c82333;
 }
-
-.saveButton {
-  background-color: #2196F3;
+.header .actions .cancelButton {
+  background: #6c757d;
   color: white;
+  border: none;
 }
-.saveButton:hover {
-  background-color: #0b7dda;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.header .actions .cancelButton:hover {
+  background: #5a6268;
 }
 
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.content {
+  display: grid;
+  grid-template-columns: 1fr 250px;
+  gap: 2rem;
 }
-.formGroup label {
-  font-weight: 500;
+
+.mainInfo .infoSection {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+.mainInfo .infoSection h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
   color: #333;
 }
-.formGroup input[type=text],
-.formGroup textarea {
+.mainInfo .infoSection .projectDetails {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+}
+.mainInfo .infoSection .projectDetails .coverImage img {
+  width: 100%;
+  height: 200px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 4px;
+}
+.mainInfo .infoSection .projectDetails .coverImage .noImage {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border: 1px dashed #dee2e6;
+  border-radius: 4px;
+  color: #6c757d;
+}
+.mainInfo .infoSection .projectDetails .info p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+.mainInfo .infoSection .projectDetails .info p strong {
+  color: #333;
+}
+
+.form .formGroup {
+  margin-bottom: 1.5rem;
+}
+.form .formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+.form .formGroup input[type=text],
+.form .formGroup input[type=date],
+.form .formGroup textarea,
+.form .formGroup select {
+  width: 100%;
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
 }
-.formGroup input[type=text]:focus,
-.formGroup textarea:focus {
+.form .formGroup input[type=text]:focus,
+.form .formGroup input[type=date]:focus,
+.form .formGroup textarea:focus,
+.form .formGroup select:focus {
   outline: none;
-  border-color: #2196F3;
+  border-color: #007bff;
 }
-.formGroup textarea {
-  resize: vertical;
+.form .formGroup textarea {
   min-height: 100px;
+  resize: vertical;
+}
+.form .formGroup .imagePreview {
+  margin-top: 1rem;
+}
+.form .formGroup .imagePreview img {
+  max-width: 300px;
+  border-radius: 4px;
+}
+.form .formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form .submitButton {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.form .submitButton:hover {
+  background: #218838;
 }
 
-.checkboxLabel {
+.architectureSection {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.architectureSection .sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.architectureSection .sectionHeader h2 {
+  margin: 0;
+  color: #333;
+}
+.architectureSection .sectionHeader .addButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.checkboxLabel input[type=checkbox] {
-  width: 1.2rem;
-  height: 1.2rem;
+.architectureSection .sectionHeader .addButton:hover {
+  background: #0056b3;
 }
-
-.formActions {
-  display: flex;
-  justify-content: flex-end;
+.architectureSection .architectureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
-  margin-top: 1rem;
+}
+.architectureSection .architectureGrid .architectureCard {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+}
+.architectureSection .architectureGrid .architectureCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.architectureSection .architectureGrid .architectureCard .cardIcon {
+  color: #007bff;
+  margin-right: 1rem;
+}
+.architectureSection .architectureGrid .architectureCard .cardIcon svg {
+  font-size: 2rem;
+}
+.architectureSection .architectureGrid .architectureCard .cardContent {
+  flex: 1;
+}
+.architectureSection .architectureGrid .architectureCard .cardContent h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+.architectureSection .architectureGrid .architectureCard .cardContent p {
+  margin: 0 0 1rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+.architectureSection .architectureGrid .architectureCard .cardContent .cardStatus {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: #e9ecef;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #495057;
+}
+.architectureSection .noProjects {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
 }
 
-.details {
+.sideMenu .menuSection {
+  position: sticky;
+  top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  background-color: #f9f9f9;
-  padding: 2rem;
-  border-radius: 8px;
+  gap: 0.5rem;
+}
+.sideMenu .menuSection .menuButton {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s;
+}
+.sideMenu .menuSection .menuButton:hover {
+  background: #f5f5f5;
+}
+.sideMenu .menuSection .menuButton .icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+  color: #007bff;
 }
 
-.detailItem h3 {
-  font-size: 1rem;
-  color: #666;
-  margin: 0 0 0.5rem 0;
+.error {
+  padding: 1rem;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  color: #c00;
+  margin: 1rem 0;
+  text-align: center;
 }
-.detailItem p {
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0;
+.error h2 {
+  margin-top: 0;
+}
+.error button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #c00;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.error button:hover {
+  background: #a00;
 }/*# sourceMappingURL=ProjectDetail.module.css.map */

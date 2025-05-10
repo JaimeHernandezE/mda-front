@@ -101,7 +101,7 @@ function generateTableRowsWithAccordion({
                     sx={{ minWidth: 120 }}
                   />
                 ) : (
-                  <Typography variant="subtitle1" fontWeight={600}>{node.name}</Typography>
+                  <Typography className={styles.nombre}>{node.name}</Typography>
                 )}
               </Box>
             </td>
@@ -143,7 +143,7 @@ function generateTableRowsWithAccordion({
           </tr>
           {/* Fila para la descripción del listado */}
           <tr className={styles.listadoRow}>
-            <td colSpan={7} className={styles.listadoCellNombreIndent}>
+            <td colSpan={7} className={styles.listadoCellDescripcionIndent}>
               {editingListId === node.id ? (
                 <TextField
                   value={editListDescription}
@@ -158,7 +158,7 @@ function generateTableRowsWithAccordion({
                 />
               ) : (
                 node.description && (
-                  <Typography variant="body2" className={styles.descripcion}>
+                  <Typography className={styles.descripcion}>
                     {node.description}
                   </Typography>
                 )
@@ -191,7 +191,7 @@ function generateTableRowsWithAccordion({
               {/* Luego renderiza los documentos hijos de este listado */}
               {(node.children || []).filter((n: any) => n.type !== 'list').map((doc: any) => (
                 <tr key={doc.id}>
-                  <td className={styles.tableCellIndent} style={{ paddingLeft: 8 + depth * 32 }}>
+                  <td className={`${styles.tableCellIndent} ${styles[`indent-${depth + 1}`]}`}>
                     <Typography variant="body2">{doc.name}</Typography>
                   </td>
                   <td className={styles.tableCell}>{doc.type}</td>
