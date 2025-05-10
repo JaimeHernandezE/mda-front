@@ -18,14 +18,14 @@
 }
 
 .listadoCellNombreIndent {
-  padding-left: 56px;
+  padding-left: 30px;
 }
 
 .descripcion {
   color: $primary-color;
-  font-size: $font-size-xs;
-  margin-top: 0.1rem;
-  margin-bottom: 0.1rem;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
 }
 
 .acciones {
@@ -61,8 +61,7 @@
 }
 
 .tableCellIndent {
-  padding: $spacing-sm;
-  padding-left: calc($spacing-sm + 32px);
+  padding-left: 8px;
 }
 
 .tableCellRight {

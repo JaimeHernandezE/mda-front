@@ -142,7 +142,7 @@ function generateTableRowsWithAccordion({
           </tr>
           {/* Fila para la descripción del listado */}
           <tr className={styles.listadoRow}>
-            <td colSpan={8} className={styles.listadoCellNombreIndent}>
+            <td colSpan={7} className={styles.listadoCellNombreIndent}>
               {editingListId === node.id ? (
                 <TextField
                   value={editListDescription}
@@ -165,60 +165,65 @@ function generateTableRowsWithAccordion({
             </td>
           </tr>
           {openAccordions[node.id] && (
-            generateTableRowsWithAccordion({
-              nodes: node.children || [],
-              depth: depth + 1,
-              openAccordions,
-              handleAccordionToggle,
-              editingListId,
-              editListName,
-              setEditListName,
-              editListDescription,
-              setEditListDescription,
-              savingEdit,
-              handleSaveListName,
-              handleEditList,
-              setAnchorEl,
-              setSelectedListId,
-              setCreatingList,
-              setError,
-              setDeleteTarget,
-              setShowDeleteModal,
-            })
+            <>
+              {/* Primero renderiza los listados hijos recursivamente */}
+              {generateTableRowsWithAccordion({
+                nodes: (node.children || []).filter((n: any) => n.type === 'list'),
+                depth: depth + 1,
+                openAccordions,
+                handleAccordionToggle,
+                editingListId,
+                editListName,
+                setEditListName,
+                editListDescription,
+                setEditListDescription,
+                savingEdit,
+                handleSaveListName,
+                handleEditList,
+                setAnchorEl,
+                setSelectedListId,
+                setCreatingList,
+                setError,
+                setDeleteTarget,
+                setShowDeleteModal,
+              })}
+              {/* Luego renderiza los documentos hijos de este listado */}
+              {(node.children || []).filter((n: any) => n.type !== 'list').map((doc: any) => (
+                <tr key={doc.id}>
+                  <td className={styles.tableCellIndent} style={{ paddingLeft: 8 + depth * 32 }}>
+                    <Typography variant="body2">{doc.name}</Typography>
+                  </td>
+                  <td className={styles.tableCell}>{doc.type}</td>
+                  <td className={styles.tableCell}>{doc.start_date ? new Date(doc.start_date).toLocaleDateString() : '-'}</td>
+                  <td className={styles.tableCell}>{doc.end_date ? new Date(doc.end_date).toLocaleDateString() : '-'}</td>
+                  <td className={styles.tableCell}>-</td>
+                  <td className={styles.tableCell}>-</td>
+                  <td className={styles.tableCellRight}>
+                    <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(doc); }}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={e => {
+                        e.stopPropagation();
+                        setDeleteTarget(doc);
+                        setShowDeleteModal(true);
+                      }}
+                      className={styles.tableCellRightButton}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </td>
+                </tr>
+              ))}
+            </>
           )}
         </React.Fragment>
       );
     } else {
       // Fila para documento
-      rows.push(
-        <tr key={node.id}>
-          <td className={styles.tableCellIndent}>
-            <Typography variant="body2">{node.name}</Typography>
-          </td>
-          <td className={styles.tableCell}>{node.type}</td>
-          <td className={styles.tableCell}>{node.start_date ? new Date(node.start_date).toLocaleDateString() : '-'}</td>
-          <td className={styles.tableCell}>{node.end_date ? new Date(node.end_date).toLocaleDateString() : '-'}</td>
-          <td className={styles.tableCell}>-</td>
-          <td className={styles.tableCell}>-</td>
-          <td className={styles.tableCellRight}>
-            <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(node); }}>
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              size="small"
-              color="error"
-              onClick={e => {
-                e.stopPropagation();
-                setDeleteTarget(node);
-                setShowDeleteModal(true);
-              }}
-              className={styles.tableCellRightButton}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </td>
-        </tr>
-      );
+      // Solo renderizar documentos en el nivel raíz (si es necesario, pero normalmente no)
     }
   });
   return rows;
@@ -457,6 +462,13 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                 }
                 setError(null);
                 try {
+                  await createList.mutateAsync({
+                    parent: selectedListId,
+                    name: newListName,
+                    description: '',
+                    is_active: true,
+                    type: 'list' as NodeType,
+                  });
                   setCreatingList(false);
                   setNewListName('');
                   setSelectedListId(null);
