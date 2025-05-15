@@ -15,6 +15,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './ListadoDeAntecedentes.module.scss';
 import EditDocumentNode from '../EditArchitectureNodes/EditDocumentNode';
+import EditListNode from '../EditArchitectureNodes/EditListNode';
 
 interface ListadoDeAntecedentesProps {
   stageId: number;
@@ -36,20 +37,13 @@ function extractBackendError(err: any): string {
 interface GenerateTableRowsProps {
   nodes: any[];
   depth?: number;
-  editingListId: number | null;
-  editListName: string;
-  setEditListName: React.Dispatch<React.SetStateAction<string>>;
-  editListDescription: string;
-  setEditListDescription: React.Dispatch<React.SetStateAction<string>>;
-  savingEdit: boolean;
-  handleSaveListName: (list: any) => void;
-  handleEditList: (list: any) => void;
   setAnchorEl: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
   setSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
   setCreatingList: React.Dispatch<React.SetStateAction<boolean>>;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   setDeleteTarget: React.Dispatch<React.SetStateAction<any | null>>;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditingListNode: React.Dispatch<React.SetStateAction<ProjectNode | null>>;
 }
 
 // Generar filas de la tabla mezclando documentos y listados hijos, con indentación y controles y acordeón
@@ -58,25 +52,16 @@ function generateTableRowsWithAccordion({
   depth = 0,
   openAccordions,
   handleAccordionToggle,
-  editingListId,
-  editListName,
-  setEditListName,
-  editListDescription,
-  setEditListDescription,
-  savingEdit,
-  handleSaveListName,
-  handleEditList,
   setAnchorEl,
   setSelectedListId,
   setCreatingList,
   setError,
   setDeleteTarget,
   setShowDeleteModal,
+  setEditingListNode,
 }: GenerateTableRowsProps & {
   openAccordions: { [key: number]: boolean };
   handleAccordionToggle: (listId: number) => void;
-  setDeleteTarget: React.Dispatch<React.SetStateAction<any | null>>;
-  setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 }): React.ReactNode[] {
   let rows: React.ReactNode[] = [];
   nodes.forEach((node: any) => {
@@ -89,20 +74,7 @@ function generateTableRowsWithAccordion({
                 <IconButton size="small" onClick={e => { e.stopPropagation(); handleAccordionToggle(node.id); }}>
                   {openAccordions[node.id] ? <ExpandMoreIcon sx={{ transform: 'rotate(180deg)' }} /> : <ExpandMoreIcon />}
                 </IconButton>
-                {editingListId === node.id ? (
-                  <TextField
-                    value={editListName}
-                    onChange={e => setEditListName(e.target.value)}
-                    size="small"
-                    variant="standard"
-                    disabled={savingEdit}
-                    onClick={e => e.stopPropagation()}
-                    onFocus={e => e.stopPropagation()}
-                    sx={{ minWidth: 120 }}
-                  />
-                ) : (
-                  <Typography className={styles.textNombre}>{node.name}</Typography>
-                )}
+                <Typography className={styles.textNombre}>{node.name}</Typography>
               </Box>
             </td>
             <td className={styles.listadoCell}></td>
@@ -111,15 +83,9 @@ function generateTableRowsWithAccordion({
             <td className={styles.listadoCell}>{node.status || '-'}</td>
             <td className={styles.listadoCell}>{node.progress_percent ?? 0}%</td>
             <td className={styles.acciones}>
-              {editingListId === node.id ? (
-                <IconButton size="small" onClick={e => { e.stopPropagation(); handleSaveListName(node); }} disabled={savingEdit}>
-                  <SaveIcon />
-                </IconButton>
-              ) : (
-                <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(node); }}>
-                  <EditIcon />
-                </IconButton>
-              )}
+              <IconButton size="small" onClick={e => { e.stopPropagation(); setEditingListNode(node); }}>
+                <EditIcon />
+              </IconButton>
               <IconButton
                 size="small"
                 onClick={e => { e.stopPropagation(); setAnchorEl(e.currentTarget); setSelectedListId(node.id); setCreatingList(false); setError(null); }}
@@ -144,24 +110,10 @@ function generateTableRowsWithAccordion({
           {/* Fila para la descripción del listado */}
           <tr className={styles.listadoRow}>
             <td colSpan={7} className={styles.listadoCellDescripcionIndent}>
-              {editingListId === node.id ? (
-                <TextField
-                  value={editListDescription}
-                  onChange={e => setEditListDescription(e.target.value)}
-                  size="small"
-                  variant="standard"
-                  placeholder="Descripción"
-                  fullWidth
-                  multiline
-                  minRows={1}
-                  InputProps={{ className: styles.descripcion }}
-                />
-              ) : (
-                node.description && (
-                  <Typography className={styles.textDescripcion}>
-                    {node.description}
-                  </Typography>
-                )
+              {node.description && (
+                <Typography className={styles.textDescripcion}>
+                  {node.description}
+                </Typography>
               )}
             </td>
           </tr>
@@ -173,24 +125,16 @@ function generateTableRowsWithAccordion({
                 depth: depth + 1,
                 openAccordions,
                 handleAccordionToggle,
-                editingListId,
-                editListName,
-                setEditListName,
-                editListDescription,
-                setEditListDescription,
-                savingEdit,
-                handleSaveListName,
-                handleEditList,
                 setAnchorEl,
                 setSelectedListId,
                 setCreatingList,
                 setError,
                 setDeleteTarget,
                 setShowDeleteModal,
+                setEditingListNode,
               })}
               {/* Luego renderiza los documentos hijos de este listado */}
               {(node.children || []).filter((n: any) => n.type !== 'list').map((doc: any) => {
-                console.log('Documento:', doc); // Debug: muestra la data del documento
                 return (
                   <tr key={doc.id}>
                     <td className={`${styles.tableCellIndent} ${styles[`indent-${depth + 1}`]}`}>
@@ -208,7 +152,7 @@ function generateTableRowsWithAccordion({
                     <td className={styles.tableCell}>{doc.status || '-'}</td>
                     <td className={styles.tableCell}>{doc.progress_percent ?? 0}%</td>
                     <td className={styles.tableCellRight}>
-                      <IconButton size="small" onClick={e => { e.stopPropagation(); handleEditList(doc); }}>
+                      <IconButton size="small" onClick={e => { e.stopPropagation(); /* handleEditList(doc); */ }}>
                         <EditIcon />
                       </IconButton>
                       <IconButton
@@ -251,10 +195,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   const [newListName, setNewListName] = useState('');
   const [creatingList, setCreatingList] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editingListId, setEditingListId] = useState<number | null>(null);
-  const [editListName, setEditListName] = useState<string>('');
-  const [editListDescription, setEditListDescription] = useState<string>('');
-  const [savingEdit, setSavingEdit] = useState(false);
+  const [editingListNode, setEditingListNode] = useState<ProjectNode | null>(null);
   // Estado para eliminar
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -327,35 +268,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
     }
   };
 
-  const handleEditList = (list: any) => {
-    if (list.type === 'document') {
-      setEditingNode(list);
-    } else {
-      setEditingListId(list.id);
-      setEditListName(list.name);
-      setEditListDescription(list.description || '');
-    }
-  };
-
-  const handleSaveListName = async (list: any) => {
-    if (!editListName.trim()) return;
-    setSavingEdit(true);
-    try {
-      await updateProject.mutateAsync({
-        id: list.id,
-        data: { name: editListName, description: editListDescription, type: 'list' },
-      });
-      setEditingListId(null);
-      setEditListName('');
-      setEditListDescription('');
-      queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
-    } catch (err) {
-      setError(extractBackendError(err));
-    } finally {
-      setSavingEdit(false);
-    }
-  };
-
+  
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -395,20 +308,13 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                 depth: 0,
                 openAccordions,
                 handleAccordionToggle,
-                editingListId,
-                editListName,
-                setEditListName,
-                editListDescription,
-                setEditListDescription,
-                savingEdit,
-                handleSaveListName,
-                handleEditList,
                 setAnchorEl,
                 setSelectedListId,
                 setCreatingList,
                 setError,
                 setDeleteTarget,
                 setShowDeleteModal,
+                setEditingListNode,
               })}
             </tbody>
           </table>
@@ -521,6 +427,12 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
         open={!!editingNode}
         onClose={() => setEditingNode(null)}
         node={editingNode}
+        stageId={stageId}
+      />
+      <EditListNode
+        open={!!editingListNode}
+        onClose={() => setEditingListNode(null)}
+        node={editingListNode}
         stageId={stageId}
       />
     </div>

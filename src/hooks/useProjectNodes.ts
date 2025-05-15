@@ -63,8 +63,9 @@ export const useProjectNodes = <T extends ProjectNode = ProjectNode>(filters?: P
   });
 
   const updateProject = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: FormData | UpdateProjectNodeDto }) => {
+    mutationFn: async ({ id, data }: { id: number; data: FormData | UpdateProjectNodeDto | string }) => {
       const isFormData = data instanceof FormData;
+      let body: FormData | UpdateProjectNodeDto | string = data;
       const config = {
         ...axiosConfig,
         headers: {
@@ -72,8 +73,11 @@ export const useProjectNodes = <T extends ProjectNode = ProjectNode>(filters?: P
           'Content-Type': isFormData ? 'multipart/form-data' : 'application/json',
         },
       };
-
-      const response = await axios.put(`${API_URL}/project-nodes/${id}/`, data, config);
+      // Si no es FormData y el content-type es JSON, serializa el body
+      if (!isFormData && config.headers['Content-Type'] === 'application/json' && typeof data === 'object') {
+        body = JSON.stringify(data);
+      }
+      const response = await axios.put(`${API_URL}/project-nodes/${id}/`, body, config);
       return response.data;
     },
     onSuccess: (_, variables) => {
