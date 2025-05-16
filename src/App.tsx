@@ -24,6 +24,9 @@ import ProjectDetail from "./pages/Projects/ProjectDetail";
 import CreateArchitectureProject from "./pages/ArchitectureProjects/CreateArchitectureProject";
 import ArchitectureProjectDetail from "./pages/ArchitectureProjects/ArchitectureProjectDetail";
 import EditArchitectureProject from "./pages/ArchitectureProjects/EditArchitectureProject";
+import { FormNodeProvider } from './context/FormNodeContext';
+import FormSelectorPage from './pages/Forms/FormSelectorPage';
+import FormNodeCreatePage from './pages/Forms/FormNodeCreatePage';
 
 /** ────────────────────────────────────────────────────────────────────────────
  *  🎛️  React‑Query client (sin refetch on focus)
@@ -72,50 +75,56 @@ const App: React.FC = () => {
         <ThemeProvider theme={theme}>
           <Router future={{ v7_relativeSplatPath: true }}>
             <AuthProvider>
-              <Routes>
-                {/* ───────── Public ‐‐ landing y login ───────── */}
-                <Route
-                  path="/"
-                  element={
-                    <PublicLayout>
-                      <Landing />
-                    </PublicLayout>
-                  }
-                />
-                <Route path="/login" element={<Login />} />
+              <FormNodeProvider>
+                <Routes>
+                  {/* ───────── Public ‐‐ landing y login ───────── */}
+                  <Route
+                    path="/"
+                    element={
+                      <PublicLayout>
+                        <Landing />
+                      </PublicLayout>
+                    }
+                  />
+                  <Route path="/login" element={<Login />} />
 
-                {/* ───────── Protected ‐‐ todo lo demás ───────── */}
-                <Route element={<ProtectedLayout />}>
-                  <Route path="home" element={<Home />} />
+                  {/* ───────── Protected ‐‐ todo lo demás ───────── */}
+                  <Route element={<ProtectedLayout />}>
+                    <Route path="home" element={<Home />} />
 
-                  {/*  Agrupamos las rutas de proyectos  */}
-                  <Route path="proyectos">
-                    {/* /proyectos/crear */}
-                    <Route path="crear" element={<CreateProject />} />
+                    {/*  Agrupamos las rutas de proyectos  */}
+                    <Route path="proyectos">
+                      {/* /proyectos/crear */}
+                      <Route path="crear" element={<CreateProject />} />
 
-                    {/* /proyectos/lista */}
-                    <Route path="lista" element={<ProjectList />} />
+                      {/* /proyectos/lista */}
+                      <Route path="lista" element={<ProjectList />} />
 
-                    {/* /proyectos/:projectId  */}
-                    <Route path=":projectId" element={<ProjectDetail />} />
+                      {/* /proyectos/:projectId  */}
+                      <Route path=":projectId" element={<ProjectDetail />} />
 
-                    {/* /proyectos/:projectId/arquitectura/*  */}
-                    <Route path=":projectId/arquitectura">
-                      {/* /proyectos/:projectId/arquitectura/crear */}
-                      <Route path="crear" element={<CreateArchitectureProject />} />
+                      {/* /proyectos/:projectId/arquitectura/*  */}
+                      <Route path=":projectId/arquitectura">
+                        {/* /proyectos/:projectId/arquitectura/crear */}
+                        <Route path="crear" element={<CreateArchitectureProject />} />
 
-                      {/* /proyectos/:projectId/arquitectura/:architectureId */}
-                      <Route path=":architectureId" element={<ArchitectureProjectDetail />} />
+                        {/* /proyectos/:projectId/arquitectura/:architectureId */}
+                        <Route path=":architectureId" element={<ArchitectureProjectDetail />} />
 
-                      {/* /proyectos/:projectId/arquitectura/:architectureId/editar */}
-                      <Route path=":architectureId/editar" element={<EditArchitectureProject />} />
+                        {/* /proyectos/:projectId/arquitectura/:architectureId/editar */}
+                        <Route path=":architectureId/editar" element={<EditArchitectureProject />} />
+                      </Route>
                     </Route>
-                  </Route>
-                </Route>
 
-                {/* fallback */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+                    {/* Rutas para forms */}
+                    <Route path="forms/select" element={<FormSelectorPage />} />
+                    <Route path="forms/create" element={<FormNodeCreatePage />} />
+                  </Route>
+
+                  {/* fallback */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </FormNodeProvider>
             </AuthProvider>
           </Router>
         </ThemeProvider>

@@ -5,7 +5,6 @@ import { Button, Popover, MenuItem, TextField, Typography, IconButton, Box, } fr
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -14,11 +13,15 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './ListadoDeAntecedentes.module.scss';
-import EditDocumentNode from '../EditArchitectureNodes/EditDocumentNode';
+import ModalDocumentNode from '../EditArchitectureNodes/EditDocumentNode';
 import EditListNode from '../EditArchitectureNodes/EditListNode';
+import { useFormNode } from '../../context/FormNodeContext';
+import { useNavigate } from 'react-router-dom';
 
 interface ListadoDeAntecedentesProps {
   stageId: number;
+  projectId: number;
+  architectureProjectId: number;
 }
 
 // Agregar función para extraer el error del backend
@@ -44,6 +47,11 @@ interface GenerateTableRowsProps {
   setDeleteTarget: React.Dispatch<React.SetStateAction<any | null>>;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setEditingListNode: React.Dispatch<React.SetStateAction<ProjectNode | null>>;
+  setEditingNode: React.Dispatch<React.SetStateAction<ProjectNode | null>>;
+  setNodeData: (data: any) => void;
+  setSelectedForm: (form: any) => void;
+  navigate: (path: string) => void;
+  stageId: number;
 }
 
 // Generar filas de la tabla mezclando documentos y listados hijos, con indentación y controles y acordeón
@@ -59,6 +67,11 @@ function generateTableRowsWithAccordion({
   setDeleteTarget,
   setShowDeleteModal,
   setEditingListNode,
+  setEditingNode,
+  setNodeData,
+  setSelectedForm,
+  navigate,
+  stageId,
 }: GenerateTableRowsProps & {
   openAccordions: { [key: number]: boolean };
   handleAccordionToggle: (listId: number) => void;
@@ -111,7 +124,7 @@ function generateTableRowsWithAccordion({
           <tr className={styles.listadoRow}>
             <td colSpan={7} className={styles.listadoCellDescripcionIndent}>
               {node.description && (
-                <Typography className={styles.textDescripcion}>
+                <Typography variant="body2" className={styles.textDescripcion}>
                   {node.description}
                 </Typography>
               )}
@@ -132,6 +145,11 @@ function generateTableRowsWithAccordion({
                 setDeleteTarget,
                 setShowDeleteModal,
                 setEditingListNode,
+                setEditingNode,
+                setNodeData,
+                setSelectedForm,
+                navigate,
+                stageId,
               })}
               {/* Luego renderiza los documentos hijos de este listado */}
               {(node.children || []).filter((n: any) => n.type !== 'list').map((doc: any) => {
@@ -152,7 +170,26 @@ function generateTableRowsWithAccordion({
                     <td className={styles.tableCell}>{doc.status || '-'}</td>
                     <td className={styles.tableCell}>{doc.progress_percent ?? 0}%</td>
                     <td className={styles.tableCellRight}>
-                      <IconButton size="small" onClick={e => { e.stopPropagation(); /* handleEditList(doc); */ }}>
+                      <IconButton size="small" onClick={e => {
+                        e.stopPropagation();
+                        if (doc.type === 'form') {
+                          if (typeof setNodeData === 'function' && typeof setSelectedForm === 'function' && typeof navigate === 'function') {
+                            setNodeData({
+                              ...doc,
+                              stageId: stageId,
+                              isEditing: true
+                            });
+                            setSelectedForm({ 
+                              id: doc.form_id, 
+                              name: doc.form_name,
+                              isEditing: true
+                            });
+                            navigate('/forms/create');
+                          }
+                        } else {
+                          setEditingNode(doc);
+                        }
+                      }}>
                         <EditIcon />
                       </IconButton>
                       <IconButton
@@ -183,7 +220,7 @@ function generateTableRowsWithAccordion({
   return rows;
 }
 
-const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }) => {
+const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, projectId, architectureProjectId }) => {
   const queryClient = useQueryClient();
   // Usar el árbol completo del stage
   const { data: tree, isLoading } = useProjectNodeTree(stageId);
@@ -202,9 +239,11 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
   const [deleting, setDeleting] = useState(false);
   const [editingNode, setEditingNode] = useState<ProjectNode | null>(null);
 
+  const { setSelectedForm, setNodeData } = useFormNode();
+  const navigate = useNavigate();
+
   // For creating lists and antecedentes, fallback to useProjectNodes for mutations
-  const { createProject: createList, updateProject, deleteProject } = require('../../hooks/useProjectNodes').useProjectNodes();
-  const { createProject: createAntecedent } = require('../../hooks/useProjectNodes').useProjectNodes();
+  const { createProject: createList, deleteProject } = require('../../hooks/useProjectNodes').useProjectNodes();
 
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (!tree) return <Typography>No hay datos.</Typography>;
@@ -253,16 +292,53 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
       return;
     }
     setError(null);
-    try {
-      await createAntecedent.mutateAsync({
+
+    if (type === 'form') {
+      setNodeData({
         parent: selectedListId,
-        name: `Nuevo ${type}`,
+        name: '',
+        description: '',
+        is_active: true,
+        type: 'form',
+        project_id: projectId,
+        architecture_project_id: architectureProjectId,
+      });
+      setSelectedForm(undefined);
+      handleMenuClose();
+      navigate('/forms/select');
+      return;
+    }
+    // ... resto para otros tipos (document, etc)
+    try {
+      // Crear un nodo temporal con el tipo seleccionado
+      const tempNode: ProjectNode = {
+        id: -1, // ID temporal
+        parent: selectedListId,
+        name: '',
         description: '',
         is_active: true,
         type,
-      });
+        children: [],
+        file_type: null,
+        properties: [],
+        architecture_project: null,
+        file: null,
+        cover_image: null,
+        external_url: null,
+        external_file_name: null,
+        external_file_id: null,
+        metadata: {},
+        start_date: null,
+        end_date: null,
+        status: 'en_estudio',
+        progress_percent: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        file_url: null,
+        cover_image_url: null
+      };
+      setEditingNode(tempNode);
       handleMenuClose();
-      queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
     } catch (err: any) {
       setError(extractBackendError(err));
     }
@@ -315,6 +391,11 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
                 setDeleteTarget,
                 setShowDeleteModal,
                 setEditingListNode,
+                setEditingNode,
+                setNodeData,
+                setSelectedForm,
+                navigate,
+                stageId,
               })}
             </tbody>
           </table>
@@ -423,7 +504,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId }
           <Button onClick={handleDelete} color="error" disabled={deleting} variant="contained">Eliminar</Button>
         </DialogActions>
       </Dialog>
-      <EditDocumentNode
+      <ModalDocumentNode
         open={!!editingNode}
         onClose={() => setEditingNode(null)}
         node={editingNode}

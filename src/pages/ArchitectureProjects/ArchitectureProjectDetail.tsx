@@ -99,7 +99,13 @@ const ArchitectureProjectDetail: React.FC = () => {
           </div>
         </div>
 
-        {activeStageId && <ListadoDeAntecedentes stageId={activeStageId} />}
+        {activeStageId && (
+          <ListadoDeAntecedentes 
+            stageId={activeStageId}
+            projectId={Number(projectId)}
+            architectureProjectId={Number(architectureId)}
+          />
+        )}
       </section>
     </div>
   );

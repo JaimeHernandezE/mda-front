@@ -56,7 +56,7 @@ const EditListNode: React.FC<EditListNodeProps> = ({ open, onClose, node, stageI
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Editar Listado</DialogTitle>
         <DialogContent>
-          <Box display="flex" flexDirection="column" gap={2}>
+          <Box display="flex" flexDirection="column" gap={2} sx={{ py: 1 }}>
             <TextField
               label="Nombre"
               value={name}

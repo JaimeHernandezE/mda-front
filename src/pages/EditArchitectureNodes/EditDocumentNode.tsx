@@ -14,8 +14,9 @@ import {
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { useQueryClient } from '@tanstack/react-query';
 import { ProjectNode, NodeStatus } from '../../types/project_nodes.types';
+import { CreateProjectNodeDto } from '../../types/project_nodes.types';
 
-interface EditDocumentNodeProps {
+interface ModalDocumentNodeProps {
   open: boolean;
   onClose: () => void;
   node: ProjectNode | null;
@@ -41,14 +42,14 @@ const STATUS_OPTIONS: NodeStatus[] = [
   'finalizado',
 ];
 
-const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
+const ModalDocumentNode: React.FC<ModalDocumentNodeProps> = ({
   open,
   onClose,
   node,
   stageId,
 }) => {
   const queryClient = useQueryClient();
-  const { updateProject } = useProjectNodes();
+  const { updateProject, createProject } = useProjectNodes();
 
   const [formData, setFormData] = useState({
     name: node?.name || '',
@@ -83,8 +84,6 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
     }
   }, [node]);
 
-  console.log('node', node);
-
   const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -104,43 +103,60 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
   };
 
   const handleSubmit = async () => {
-    if (!node) return;
-    
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const formDataToSend = new FormData();
-      
-      // Add all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
-          formDataToSend.append(key, value.toString());
+      if (node && node.id !== -1) {
+        // Actualizar nodo existente
+        const formDataToSend = new FormData();
+        
+        // Add all form fields
+        Object.entries(formData).forEach(([key, value]) => {
+          if (value !== null && value !== undefined && value !== '') {
+            formDataToSend.append(key, value.toString());
+          }
+        });
+
+        // Add file if selected
+        if (selectedFile) {
+          formDataToSend.append('file', selectedFile);
         }
-      });
 
-      // Add file if selected
-      if (selectedFile) {
-        formDataToSend.append('file', selectedFile);
+        // Si el usuario eliminó el archivo, agrega delete_file
+        if (fileMarkedForDelete) {
+          formDataToSend.append('delete_file', 'true');
+        }
+
+        // Add type
+        formDataToSend.append('type', 'document');
+
+        await updateProject.mutateAsync({
+          id: node.id,
+          data: formDataToSend,
+        });
+      } else {
+        // Crear nuevo nodo
+        const createData: CreateProjectNodeDto = {
+          name: formData.name,
+          description: formData.description || undefined,
+          type: 'document',
+          file_type: formData.file_type || undefined,
+          parent: node?.parent || undefined,
+          is_active: true,
+          file: selectedFile || undefined,
+          start_date: formData.start_date || undefined,
+          end_date: formData.end_date || undefined,
+          status: formData.status,
+          progress_percent: formData.progress_percent,
+        };
+        await createProject.mutateAsync(createData);
       }
-
-      // Si el usuario eliminó el archivo, agrega delete_file
-      if (fileMarkedForDelete) {
-        formDataToSend.append('delete_file', 'true');
-      }
-
-      // Add type
-      formDataToSend.append('type', 'document');
-
-      await updateProject.mutateAsync({
-        id: node.id,
-        data: formDataToSend,
-      });
 
       queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Error al actualizar el documento');
+      setError(err.message || 'Error al guardar el documento');
     } finally {
       setIsSubmitting(false);
     }
@@ -149,7 +165,7 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        {node ? 'Editar Documento' : 'Nuevo Documento'}
+        {node && node.id !== -1 ? 'Editar Documento' : 'Nuevo Documento'}
       </DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
@@ -255,9 +271,14 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
                 component="span"
                 fullWidth
               >
-                {selectedFile ? selectedFile.name : 'Seleccionar Archivo'}
+                {selectedFile ? 'Cambiar archivo' : 'Seleccionar archivo'}
               </Button>
             </label>
+            {selectedFile && (
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                Archivo seleccionado: {selectedFile.name}
+              </Typography>
+            )}
           </Box>
 
           {error && (
@@ -274,7 +295,8 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
         <Button
           onClick={handleSubmit}
           variant="contained"
-          disabled={isSubmitting}
+          color="primary"
+          disabled={isSubmitting || !formData.name || !formData.file_type}
           startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
         >
           {isSubmitting ? 'Guardando...' : 'Guardar'}
@@ -284,4 +306,4 @@ const EditDocumentNode: React.FC<EditDocumentNodeProps> = ({
   );
 };
 
-export default EditDocumentNode; 
+export default ModalDocumentNode; 
