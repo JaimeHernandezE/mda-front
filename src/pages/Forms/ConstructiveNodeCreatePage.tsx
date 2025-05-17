@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, TextField, FormControlLabel, Switch } from '@mui/material';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 
-export default function FormNodeCreatePage() {
+export default function ConstructionSolutionCreatePage() {
   const { selectedForm, nodeData, setNodeData } = useFormNode();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -22,7 +22,7 @@ export default function FormNodeCreatePage() {
   }, [form, setNodeData]);
 
   if (!selectedForm && !nodeData) {
-    navigate('/forms/select');
+    navigate('/constructive/select');
     return null;
   }
 
@@ -54,7 +54,7 @@ export default function FormNodeCreatePage() {
           name: form.name,
           description: form.description,
           is_active: form.is_active,
-          type: 'form',
+          type: 'construction_solution',
           parent: nodeData?.parent,
         });
       }
@@ -66,7 +66,7 @@ export default function FormNodeCreatePage() {
         navigate(-1); // Fallback a navegación hacia atrás si no hay IDs
       }
     } catch (err: any) {
-      setError(err.message || 'Error al guardar el nodo');
+      setError(err.message || 'Error al guardar la solución constructiva');
     } finally {
       setSaving(false);
     }
@@ -75,7 +75,7 @@ export default function FormNodeCreatePage() {
   return (
     <Box p={3}>
       <Typography variant="h5" gutterBottom>
-        {nodeData?.isEditing ? 'Editar Formulario' : `Crear nodo: ${selectedForm?.name}`}
+        {nodeData?.isEditing ? 'Editar Solución Constructiva' : `Crear Solución Constructiva: ${selectedForm?.name}`}
       </Typography>
       <Box my={2} display="flex" flexDirection="column" gap={2}>
         <TextField
@@ -103,7 +103,7 @@ export default function FormNodeCreatePage() {
                 description: form.description,
                 is_active: form.is_active,
               }));
-              navigate('/forms/select');
+              navigate('/constructive/select');
             }}
           >
             Volver a seleccionar formulario

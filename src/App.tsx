@@ -25,8 +25,8 @@ import CreateArchitectureProject from "./pages/ArchitectureProjects/CreateArchit
 import ArchitectureProjectDetail from "./pages/ArchitectureProjects/ArchitectureProjectDetail";
 import EditArchitectureProject from "./pages/ArchitectureProjects/EditArchitectureProject";
 import { FormNodeProvider } from './context/FormNodeContext';
-import FormSelectorPage from './pages/Forms/FormSelectorPage';
-import FormNodeCreatePage from './pages/Forms/FormNodeCreatePage';
+import ConstructiveSelectorPage from './pages/Forms/ConstructiveSelectorPage';
+import ConstructionSolutionCreatePage from './pages/Forms/ConstructiveNodeCreatePage';
 
 /** ────────────────────────────────────────────────────────────────────────────
  *  🎛️  React‑Query client (sin refetch on focus)
@@ -116,9 +116,9 @@ const App: React.FC = () => {
                       </Route>
                     </Route>
 
-                    {/* Rutas para forms */}
-                    <Route path="forms/select" element={<FormSelectorPage />} />
-                    <Route path="forms/create" element={<FormNodeCreatePage />} />
+                    {/* Rutas para soluciones constructivas */}
+                    <Route path="constructive/select" element={<ConstructiveSelectorPage />} />
+                    <Route path="constructive/create" element={<ConstructionSolutionCreatePage />} />
                   </Route>
 
                   {/* fallback */}

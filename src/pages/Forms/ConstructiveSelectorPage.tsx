@@ -5,7 +5,7 @@ import { Accordion, AccordionSummary, AccordionDetails, Typography, TextField, B
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useFormCategoriesTree } from '../../hooks/useFormCategoriesTree';
 
-function FormCategoryAccordion({ category, depth = 0, onSelectForm }: any) {
+function ConstructiveCategoryAccordion({ category, depth = 0, onSelectForm }: any) {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -21,7 +21,7 @@ function FormCategoryAccordion({ category, depth = 0, onSelectForm }: any) {
       <AccordionDetails>
         {/* Subcategorías */}
         {category.children?.map((sub: any) => (
-          <FormCategoryAccordion key={sub.id} category={sub} depth={depth + 1} onSelectForm={onSelectForm} />
+          <ConstructiveCategoryAccordion key={sub.id} category={sub} depth={depth + 1} onSelectForm={onSelectForm} />
         ))}
         {/* Formularios */}
         <List>
@@ -36,7 +36,7 @@ function FormCategoryAccordion({ category, depth = 0, onSelectForm }: any) {
   );
 }
 
-export default function FormSelectorPage() {
+export default function ConstructiveSelectorPage() {
   const { setSelectedForm } = useFormNode();
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export default function FormSelectorPage() {
 
   const handleSelectForm = (form: any) => {
     setSelectedForm(form);
-    navigate('/forms/create');
+    navigate('/constructive/create');
   };
 
   return (
@@ -64,7 +64,7 @@ export default function FormSelectorPage() {
       ) : (
         <Box>
           {categories?.map((cat: any) => (
-            <FormCategoryAccordion key={cat.id} category={cat} onSelectForm={handleSelectForm} />
+            <ConstructiveCategoryAccordion key={cat.id} category={cat} onSelectForm={handleSelectForm} />
           ))}
         </Box>
       )}

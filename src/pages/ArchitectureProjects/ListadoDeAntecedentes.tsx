@@ -172,7 +172,7 @@ function generateTableRowsWithAccordion({
                     <td className={styles.tableCellRight}>
                       <IconButton size="small" onClick={e => {
                         e.stopPropagation();
-                        if (doc.type === 'form') {
+                        if (doc.type === 'construction_solution') {
                           if (typeof setNodeData === 'function' && typeof setSelectedForm === 'function' && typeof navigate === 'function') {
                             setNodeData({
                               ...doc,
@@ -184,7 +184,7 @@ function generateTableRowsWithAccordion({
                               name: doc.form_name,
                               isEditing: true
                             });
-                            navigate('/forms/create');
+                            navigate('/constructive/create');
                           }
                         } else {
                           setEditingNode(doc);
@@ -293,19 +293,19 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, 
     }
     setError(null);
 
-    if (type === 'form') {
+    if (type === 'construction_solution') {
       setNodeData({
         parent: selectedListId,
         name: '',
         description: '',
         is_active: true,
-        type: 'form',
+        type: 'construction_solution',
         project_id: projectId,
         architecture_project_id: architectureProjectId,
       });
       setSelectedForm(undefined);
       handleMenuClose();
-      navigate('/forms/select');
+      navigate('/constructive/select');
       return;
     }
     // ... resto para otros tipos (document, etc)
