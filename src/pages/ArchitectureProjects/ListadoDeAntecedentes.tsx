@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useProjectNodeTree } from '../../hooks/useProjectNodes';
-import { NodeType, ProjectNode } from '../../types/project_nodes.types';
+import { ProjectNode } from '../../types/project_nodes.types';
 import { Button, Popover, MenuItem, TextField, Typography, IconButton, Box, } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
@@ -17,6 +17,7 @@ import ModalDocumentNode from '../EditArchitectureNodes/EditDocumentNode';
 import EditListNode from '../EditArchitectureNodes/EditListNode';
 import { useFormNode } from '../../context/FormNodeContext';
 import { useNavigate } from 'react-router-dom';
+import { useNodeTypeByName } from '../../hooks/useNodeTypes';
 
 interface ListadoDeAntecedentesProps {
   stageId: number;
@@ -222,6 +223,7 @@ function generateTableRowsWithAccordion({
 
 const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, projectId, architectureProjectId }) => {
   const queryClient = useQueryClient();
+  const constructionSolutionType = useNodeTypeByName('construction_solution');
   // Usar el árbol completo del stage
   const { data: tree, isLoading } = useProjectNodeTree(stageId);
   // State for which accordions are open
@@ -275,7 +277,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, 
         name: newListName,
         description: '',
         is_active: true,
-        type: 'list' as NodeType,
+        type: 'list' as NodeTypeEnum,
       });
       setSelectedListId(result.id);
       setCreatingList(false);
@@ -286,7 +288,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, 
     }
   };
 
-  const handleCreateAntecedent = async (type: NodeType) => {
+  const handleCreateAntecedent = async (type: string) => {
     if (!selectedListId) {
       setError('Selecciona un listado');
       return;
@@ -294,12 +296,16 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, 
     setError(null);
 
     if (type === 'construction_solution') {
+      if (!constructionSolutionType) {
+        setError('No se pudo determinar el tipo de nodo');
+        return;
+      }
       setNodeData({
         parent: selectedListId,
         name: '',
         description: '',
         is_active: true,
-        type: 'construction_solution',
+        type: constructionSolutionType.id,
         project_id: projectId,
         architecture_project_id: architectureProjectId,
       });
@@ -308,7 +314,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, 
       navigate('/constructive/select');
       return;
     }
-    // ... resto para otros tipos (document, etc)
+
     try {
       // Crear un nodo temporal con el tipo seleccionado
       const tempNode: ProjectNode = {
@@ -317,7 +323,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, 
         name: '',
         description: '',
         is_active: true,
-        type,
+        type: 0, // TODO: Obtener el ID correcto del tipo
         children: [],
         file_type: null,
         properties: [],
@@ -469,7 +475,7 @@ const ListadoDeAntecedentes: React.FC<ListadoDeAntecedentesProps> = ({ stageId, 
                     name: newListName,
                     description: '',
                     is_active: true,
-                    type: 'list' as NodeType,
+                    type: 'list' as NodeTypeEnum,
                   });
                   setCreatingList(false);
                   setNewListName('');

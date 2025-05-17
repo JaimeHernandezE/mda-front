@@ -3,10 +3,13 @@ import { useFormNode } from '../../context/FormNodeContext';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, TextField, FormControlLabel, Switch } from '@mui/material';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
+import { useNodeTypeByName } from '../../hooks/useNodeTypes';
+import { NodeTypeModel } from '../../types/project_nodes.types';
 
 export default function ConstructionSolutionCreatePage() {
   const { selectedForm, nodeData, setNodeData } = useFormNode();
   const navigate = useNavigate();
+  const constructionSolutionType = useNodeTypeByName('construction_solution');
   const [form, setForm] = useState({
     name: nodeData?.name || '',
     description: nodeData?.description || '',
@@ -35,6 +38,11 @@ export default function ConstructionSolutionCreatePage() {
   };
 
   const handleSubmit = async () => {
+    if (!constructionSolutionType) {
+      setError('No se pudo determinar el tipo de nodo');
+      return;
+    }
+
     setSaving(true);
     setError(null);
     try {
@@ -54,7 +62,7 @@ export default function ConstructionSolutionCreatePage() {
           name: form.name,
           description: form.description,
           is_active: form.is_active,
-          type: 'construction_solution',
+          type: constructionSolutionType.id,
           parent: nodeData?.parent,
         });
       }
@@ -125,7 +133,7 @@ export default function ConstructionSolutionCreatePage() {
         variant="contained" 
         color="primary" 
         onClick={handleSubmit} 
-        disabled={saving || isLoadingProjects}
+        disabled={saving || isLoadingProjects || !constructionSolutionType}
       >
         {saving ? 'Guardando...' : nodeData?.isEditing ? 'Actualizar' : 'Guardar'}
       </Button>

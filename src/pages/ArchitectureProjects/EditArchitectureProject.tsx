@@ -9,6 +9,7 @@ import {
   Add as AddIcon,
   ArrowBack as BackIcon,
 } from '@mui/icons-material';
+import { useNodeTypeByName } from '../../hooks/useNodeTypeByName';
 
 type FormDataState = {
   name: string;
@@ -85,12 +86,13 @@ const EditArchitectureProject: React.FC = () => {
 
     try {
       setError(null);
+      const stageType = await useNodeTypeByName('Etapa del Proyecto');
       await createProject.mutateAsync({
         parent: Number(architectureId),
         name: newStageName,
         description: '',
         is_active: true,
-        type: 'stage',
+        type: stageType.id,
       });
       setNewStageName('');
     } catch (err: any) {

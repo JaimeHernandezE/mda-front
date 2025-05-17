@@ -15,6 +15,7 @@ import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { useQueryClient } from '@tanstack/react-query';
 import { ProjectNode, NodeStatus } from '../../types/project_nodes.types';
 import { CreateProjectNodeDto } from '../../types/project_nodes.types';
+import { useNodeTypeByName } from '../../hooks/useNodeTypeByName';
 
 interface ModalDocumentNodeProps {
   open: boolean;
@@ -50,6 +51,7 @@ const ModalDocumentNode: React.FC<ModalDocumentNodeProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const { updateProject, createProject } = useProjectNodes();
+  const { getNodeTypeByName } = useNodeTypeByName();
 
   const [formData, setFormData] = useState({
     name: node?.name || '',
@@ -129,7 +131,8 @@ const ModalDocumentNode: React.FC<ModalDocumentNodeProps> = ({
         }
 
         // Add type
-        formDataToSend.append('type', 'document');
+        const typeId = await getNodeTypeByName('Documento');
+        formDataToSend.append('type', typeId.toString());
 
         await updateProject.mutateAsync({
           id: node.id,

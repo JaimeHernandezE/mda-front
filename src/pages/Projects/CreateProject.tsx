@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
+import { useNodeTypeByName } from '../../hooks/useNodeTypeByName';
 import styles from './CreateProject.module.scss';
 
 const CreateProject: React.FC = () => {
   const navigate = useNavigate();
   const { createProject } = useProjectNodes();
+  const { getNodeTypeByName } = useNodeTypeByName();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -26,7 +28,8 @@ const CreateProject: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createProject.mutateAsync(formData);
+      const typeId = await getNodeTypeByName('Proyecto Principal');
+      await createProject.mutateAsync({ ...formData, type: typeId });
       navigate('/proyectos/lista');
     } catch (error) {
       console.error('Error al crear el proyecto:', error);

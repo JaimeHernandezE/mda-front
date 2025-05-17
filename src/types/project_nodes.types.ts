@@ -1,16 +1,3 @@
-export type NodeType =
-  | 'project'
-  | 'architecture_subproject'
-  | 'budget'
-  | 'document'
-  | 'form'
-  | 'certificate'
-  | 'construction_solution'
-  | 'layer'
-  | 'external_link'
-  | 'list'
-  | 'stage';
-
 export type NodeStatus = 'en_estudio' | 'pendiente' | 'finalizado';
 
 export interface FileType {
@@ -25,19 +12,26 @@ export interface FileType {
   updated_at: string;
 }
 
-export interface ProjectNode {
+export interface NodeTypeModel {
   id: number;
   name: string;
-  description: string | null;
-  type: NodeType;
-  file_type: FileType | null;
-  parent: number | null;
-  children: ProjectNode[];
-  properties: number[];
+  description?: string;
   is_active: boolean;
+}
+
+export interface ProjectNode {
+  id: number;
+  parent: number | null;
+  name: string;
+  description: string | null;
+  is_active: boolean;
+  type: number; // ID del tipo de nodo
+  children: ProjectNode[];
+  file_type: string | null;
+  properties: any[];
   architecture_project: number | null;
-  file: string | null; // backend file path or URL
-  cover_image: string | null; // backend image path or URL
+  file: number | null;
+  cover_image: number | null;
   external_url: string | null;
   external_file_name: string | null;
   external_file_id: string | null;
@@ -48,14 +42,14 @@ export interface ProjectNode {
   progress_percent: number;
   created_at: string;
   updated_at: string;
-  file_url?: string | null; // full URL computed in backend
-  cover_image_url?: string | null; // full URL computed in backend
+  file_url: string | null;
+  cover_image_url: string | null;
 }
 
 export interface CreateProjectNodeDto {
   name: string;
   description?: string;
-  type: NodeType;
+  type: number; // ID del tipo de nodo
   file_type?: number;
   parent?: number | null;
   properties?: number[];

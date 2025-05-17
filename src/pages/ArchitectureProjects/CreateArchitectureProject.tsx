@@ -5,11 +5,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { NodeType } from '../../types/project_nodes.types';
 import styles from './CreateArchitectureProject.module.scss';
+import { useNodeTypeByName } from '../../hooks/useNodeTypeByName';
 
 const CreateArchitectureProject: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { createProject } = useProjectNodes();
+  const { getNodeTypeByName } = useNodeTypeByName();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -34,10 +36,11 @@ const CreateArchitectureProject: React.FC = () => {
     if (!projectId) return;
 
     try {
+      const typeId = await getNodeTypeByName('Subproyecto Arquitectónico');
       await createProject.mutateAsync({
         ...formData,
         parent: Number(projectId),
-        type: 'architecture_subproject', // aseguramos el tipo correcto
+        type: typeId,
       });
       navigate(`/proyectos/${projectId}`);
     } catch (error) {

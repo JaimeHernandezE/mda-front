@@ -4,6 +4,7 @@ import { ProjectNode } from '../../types/project_nodes.types';
 import { useProjectNodes } from '../../hooks/useProjectNodes';
 import { useQueryClient } from '@tanstack/react-query';
 import NodePermissionsModal from './NodePermissionsModal';
+import { useNodeTypeByName } from '../../hooks/useNodeTypeByName';
 
 interface EditListNodeProps {
   open: boolean;
@@ -20,6 +21,7 @@ const EditListNode: React.FC<EditListNodeProps> = ({ open, onClose, node, stageI
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPermissions, setShowPermissions] = useState(false);
+  const { getNodeTypeByName } = useNodeTypeByName();
 
   useEffect(() => {
     if (node) {
@@ -38,9 +40,10 @@ const EditListNode: React.FC<EditListNodeProps> = ({ open, onClose, node, stageI
     setSaving(true);
     setError(null);
     try {
+      const typeId = await getNodeTypeByName('Listado');
       await updateProject.mutateAsync({
         id: node.id,
-        data: { name, description, type: 'list' },
+        data: { name, description, type: typeId },
       });
       queryClient.invalidateQueries({ queryKey: ['projectNodeTree', stageId] });
       onClose();
