@@ -155,7 +155,7 @@ function generateTableRowsWithAccordion({
               {(node.children || []).filter((n: any) => n.type !== 'list').map((doc: any) => {
                 return (
                   <tr key={doc.id}>
-                    <td className={`${styles.tableCellIndent} ${styles[`indent-${depth + 1}`]}`}>
+                    <td className={`${styles.tableCellIndent} ${styles[`indent-${depth + 2}`]}`}>
                       {doc.file_url ? (
                         <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className={styles.textDocument}>
                           {doc.name}

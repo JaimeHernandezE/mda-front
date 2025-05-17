@@ -45,9 +45,6 @@ const ArchitectureProjectDetail: React.FC = () => {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <h1>{architectureProject.name}</h1>
-          <div className={styles.status}>
-            Estado: {architectureProject.is_active ? 'Activo' : 'Inactivo'}
-          </div>
         </div>
         <div className={styles.headerActions}>
           <button 
@@ -70,7 +67,6 @@ const ArchitectureProjectDetail: React.FC = () => {
           <section className={styles.infoSection}>
             <h2>Detalles del Proyecto</h2>
             <p><strong>Descripción:</strong> {architectureProject.description}</p>
-            <p><strong>Fecha de inicio:</strong> {architectureProject.start_date ? new Date(architectureProject.start_date).toLocaleDateString() : 'No definida'}</p>
             <p><strong>Subtipo de permiso:</strong> {architectureProject.architecture_data?.permit_subtype_name || 'No definido'}</p>
           </section>
         </main>

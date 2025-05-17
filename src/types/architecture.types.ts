@@ -5,8 +5,6 @@ export interface ArchitectureProject {
   created: string;
   modified: string;
   project: number;
-  is_active: boolean;
-  start_date: string | null;
   permit_subtype: number | null;
   permit_subtype_name: string | null;
 }
@@ -30,8 +28,6 @@ export interface ArchitectureProjectNode extends ProjectNode {
 export interface CreateArchitectureProjectDto {
   name: string;
   description?: string;
-  is_active?: boolean;
-  start_date?: string;
   permit_subtype?: number;
   parent: number;
 }
